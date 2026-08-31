@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "J.A.R.V.I.S. YouTube Sentinel & Media Bridge",
+  "version": "1.0.0",
+  "description": "Autonomous 0.01ms YouTube Ad Annihilator & Direct Media Controller for Stark J.A.R.V.I.S. Assistant",
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "*://*.youtube.com/*",
+    "https://localhost:3000/*",
+    "https://127.0.0.1:3000/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["*://*.youtube.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "action": {
+    "default_title": "J.A.R.V.I.S. YouTube Sentinel Active"
+  }
+}

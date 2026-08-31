@@ -1,0 +1,18 @@
+{
+  "assistantName": "J.A.R.V.I.S.",
+  "userTitle": "Aditya",
+  "language": "hi-IN",
+  "theme": "theme-cyan",
+  "voicePitch": 1.0,
+  "voiceRate": 1.0,
+  "hindiVoiceRate": 0.85,
+  "voiceGender": "male",
+  "autoFollowUp": true,
+  "wakeWord": "jarvis",
+  "sentryMode": false,
+  "emergencyContact": "+919876543210",
+  "macControlsEnabled": true,
+  "aiMode": true,
+  "autoTrain": true,
+  "geminiApiKey": ""
+}

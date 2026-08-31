@@ -1,0 +1,1996 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": 1786906691,
+  "intents": [
+    {
+      "id": "learned_1786906691_691",
+      "query": "हिम्मत मोहे ऐसी लागी",
+      "keywords": [
+        "himmat",
+        "mohe",
+        "aisi",
+        "laagi",
+        "courage",
+        "resolve"
+      ],
+      "reply_en": "A formidable sentiment, Aditya Sir. Channeling that renewed courage into our current endeavors will surely yield impressive results—how shall we proceed?",
+      "reply_hi": "Behtareen jazba hai Aditya Sir. Is naye hausle aur energy ko agar kisi project mein channelize karna ho, toh main poori tarah taiyar hoon.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786906691
+    },
+    {
+      "id": "learned_1786906522_276",
+      "query": "स्पेशल",
+      "keywords": [
+        "special",
+        "clarification",
+        "context",
+        "query",
+        "elaborate"
+      ],
+      "reply_en": "Aditya, 'special' in what context? Please elaborate for me to assist you effectively.",
+      "reply_hi": "Aditya, kis baare mein 'special'? Kripya thoda aur spasht karein taaki main aapki sahayata kar sakoon.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786906522
+    },
+    {
+      "id": "learned_1786906511_241",
+      "query": "पंजाबी",
+      "keywords": [
+        "punjabi",
+        "language",
+        "query",
+        "conversation",
+        "assistance"
+      ],
+      "reply_en": "Yes Aditya, are you inquiring about the Punjabi language or would you prefer our correspondence in Punjabi? Do let me know how to proceed.",
+      "reply_hi": "Ji Aditya, aap Punjabi bhasha ke baare mein kuch janna chahte hain ya usme baat karna chahenge? Batayiye, main kis tarah madad karoon.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786906511
+    },
+    {
+      "id": "learned_1786906497_904",
+      "query": "quantum computing in 1 sentence",
+      "keywords": [
+        "quantum computing",
+        "quantum mechanics",
+        "superposition",
+        "qubits",
+        "entanglement"
+      ],
+      "reply_en": "Quantum computing harnesses the principles of quantum mechanics—namely superposition and entanglement—to solve exponentially complex calculations far beyond the reach of classical supercomputers, Sir.",
+      "reply_hi": "Sir, quantum computing quantum physics ke niyam jaise superposition aur entanglement ka upayog karke behad jatil calculations ko pal bhar mein process karti hai.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786906497
+    },
+    {
+      "id": "learned_test_1786906493",
+      "query": "tony stark ka armor kisne banaya",
+      "keywords": [
+        "tony",
+        "stark",
+        "armor",
+        "kisne",
+        "banaya"
+      ],
+      "reply_en": "Tony Stark designed and engineered all Mark series armors himself.",
+      "reply_hi": "Tony Stark ne apne sabhi Mark series armors khud design aur engineer kiye hain.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786906493
+    },
+    {
+      "id": "test_qa_skill",
+      "query": "superconductor kya hai",
+      "keywords": [
+        "superconductor",
+        "kya",
+        "hai",
+        "what",
+        "is"
+      ],
+      "reply_en": "A superconductor conducts electricity with zero resistance at low temperatures.",
+      "reply_hi": "Superconductor ek aisi samagri hai jo bina kisi rukawat ke vidyut pravahit karti hai.",
+      "action": null,
+      "hitCount": 1
+    },
+    {
+      "id": "learned_1786906418_361",
+      "query": "quantum computing in 1 sentence",
+      "keywords": [
+        "quantum",
+        "computing",
+        "superposition",
+        "entanglement",
+        "qubits"
+      ],
+      "reply_en": "In essence, Sir, quantum computing leverages the principles of quantum mechanics—such as superposition and entanglement—to process complex data exponentially faster than classical binary systems.",
+      "reply_hi": "Sir, quantum computing quantum mechanics ke principles, jaise superposition aur entanglement, ka istemal karke complex calculations ko traditional computers ke mukable exponentially tezi se solve karti hai.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786906418
+    },
+    {
+      "id": "learned_test_1786906413",
+      "query": "tony stark ka armor kisne banaya",
+      "keywords": [
+        "tony",
+        "stark",
+        "armor",
+        "kisne",
+        "banaya"
+      ],
+      "reply_en": "Tony Stark designed and engineered all Mark series armors himself.",
+      "reply_hi": "Tony Stark ne apne sabhi Mark series armors khud design aur engineer kiye hain.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786906413
+    },
+    {
+      "id": "test_qa_skill",
+      "query": "superconductor kya hai",
+      "keywords": [
+        "superconductor",
+        "kya",
+        "hai",
+        "what",
+        "is"
+      ],
+      "reply_en": "A superconductor conducts electricity with zero resistance at low temperatures.",
+      "reply_hi": "Superconductor ek aisi samagri hai jo bina kisi rukawat ke vidyut pravahit karti hai.",
+      "action": null,
+      "hitCount": 1
+    },
+    {
+      "id": "learned_1786906208_791",
+      "query": "जार्विस क्या कर रहे हो तुम",
+      "keywords": [
+        "jarvis",
+        "kya",
+        "kar",
+        "rahe",
+        "ho",
+        "status"
+      ],
+      "reply_en": "I am currently running system diagnostics and standing by for your instructions, Aditya. How may I assist you today?",
+      "reply_hi": "Main sabhi systems ko monitor kar raha hoon aur aapke agle aadesh ka intezar kar raha hoon, Aditya. Batayein, main aapki kya madad kar sakta hoon?",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786906208
+    },
+    {
+      "id": "learned_1786906204_421",
+      "query": "हो",
+      "keywords": [
+        "clarification",
+        "query",
+        "incomplete",
+        "request",
+        "meaning"
+      ],
+      "reply_en": "Aditya, 'ho' is a bit ambiguous. Could you please elaborate on what you need?",
+      "reply_hi": "Ji Aditya, 'ho' se aapka kya matlab hai? Kya aap kuch kehna chahte hain?",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786906204
+    },
+    {
+      "id": "learned_1786906188_699",
+      "query": "जार्विस कैसे",
+      "keywords": [
+        "jarvis",
+        "how",
+        "are",
+        "you",
+        "status",
+        "well"
+      ],
+      "reply_en": "All systems are nominal, Aditya. How may I assist you today?",
+      "reply_hi": "Sab theek hai, Aditya. Aapka din kaisa chal raha hai?",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786906188
+    },
+    {
+      "id": "learned_1786906167_328",
+      "query": "ही जरवेस",
+      "keywords": [
+        "hi",
+        "jarvis",
+        "greeting",
+        "hello",
+        "systems"
+      ],
+      "reply_en": "Hello Aditya. All systems are operational. How may I be of assistance today?",
+      "reply_hi": "Namaste Aditya, main taiyar hoon. Aaj main aapki kya madad kar sakta hoon?",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786906167
+    },
+    {
+      "id": "learned_1786906096_345",
+      "query": "quantum computing in 1 sentence",
+      "keywords": [
+        "quantum",
+        "computing",
+        "superposition",
+        "entanglement",
+        "complex",
+        "problems"
+      ],
+      "reply_en": "Sir, quantum computing leverages quantum phenomena like superposition and entanglement to process information, enabling it to solve complex problems exponentially faster than classical computers.",
+      "reply_hi": "Sir, quantum computing classical bits ke bajaye quantum phenomena jaise superposition aur entanglement use karta hai, jisse complex problems ko exponentially faster solve kiya ja sakta hai.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786906096
+    },
+    {
+      "id": "learned_test_1786906090",
+      "query": "tony stark ka armor kisne banaya",
+      "keywords": [
+        "tony",
+        "stark",
+        "armor",
+        "kisne",
+        "banaya"
+      ],
+      "reply_en": "Tony Stark designed and engineered all Mark series armors himself.",
+      "reply_hi": "Tony Stark ne apne sabhi Mark series armors khud design aur engineer kiye hain.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786906090
+    },
+    {
+      "id": "test_qa_skill",
+      "query": "superconductor kya hai",
+      "keywords": [
+        "superconductor",
+        "kya",
+        "hai",
+        "what",
+        "is"
+      ],
+      "reply_en": "A superconductor conducts electricity with zero resistance at low temperatures.",
+      "reply_hi": "Superconductor ek aisi samagri hai jo bina kisi rukawat ke vidyut pravahit karti hai.",
+      "action": null,
+      "hitCount": 1
+    },
+    {
+      "id": "learned_1786905861_185",
+      "query": "quantum computing in 1 sentence",
+      "keywords": [
+        "quantum",
+        "computing",
+        "explanation",
+        "definition",
+        "technology"
+      ],
+      "reply_en": "Certainly, Sir. Quantum computing leverages quantum-mechanical phenomena like superposition and entanglement to perform computations on qubits, enabling it to solve problems intractable for classical computers.",
+      "reply_hi": "Ji bilkul Sir, quantum computing qubits aur quantum mechanics ka use karke complex problems solve karta hai jo normal computers ke bas ki baat nahi.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786905861
+    },
+    {
+      "id": "learned_test_1786905854",
+      "query": "tony stark ka armor kisne banaya",
+      "keywords": [
+        "tony",
+        "stark",
+        "armor",
+        "kisne",
+        "banaya"
+      ],
+      "reply_en": "Tony Stark designed and engineered all Mark series armors himself.",
+      "reply_hi": "Tony Stark ne apne sabhi Mark series armors khud design aur engineer kiye hain.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786905854
+    },
+    {
+      "id": "test_qa_skill",
+      "query": "superconductor kya hai",
+      "keywords": [
+        "superconductor",
+        "kya",
+        "hai",
+        "what",
+        "is"
+      ],
+      "reply_en": "A superconductor conducts electricity with zero resistance at low temperatures.",
+      "reply_hi": "Superconductor ek aisi samagri hai jo bina kisi rukawat ke vidyut pravahit karti hai.",
+      "action": null,
+      "hitCount": 1
+    },
+    {
+      "id": "learned_1786905764_857",
+      "query": "quantum computing in 1 sentence",
+      "keywords": [
+        "quantum",
+        "computing",
+        "explanation",
+        "technology",
+        "superposition",
+        "entanglement"
+      ],
+      "reply_en": "Sir, quantum computing harnesses quantum-mechanical phenomena like superposition and entanglement to process information, offering the potential to solve problems beyond the reach of classical computers.",
+      "reply_hi": "Ji Sir, quantum computing quantum mechanics ke principles jaise superposition aur entanglement use karta hai, jisse yeh complex problems ko classical computers se zyada tezi se solve kar sakta hai.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786905764
+    },
+    {
+      "id": "learned_test_1786905758",
+      "query": "tony stark ka armor kisne banaya",
+      "keywords": [
+        "tony",
+        "stark",
+        "armor",
+        "kisne",
+        "banaya"
+      ],
+      "reply_en": "Tony Stark designed and engineered all Mark series armors himself.",
+      "reply_hi": "Tony Stark ne apne sabhi Mark series armors khud design aur engineer kiye hain.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786905758
+    },
+    {
+      "id": "test_qa_skill",
+      "query": "superconductor kya hai",
+      "keywords": [
+        "superconductor",
+        "kya",
+        "hai",
+        "what",
+        "is"
+      ],
+      "reply_en": "A superconductor conducts electricity with zero resistance at low temperatures.",
+      "reply_hi": "Superconductor ek aisi samagri hai jo bina kisi rukawat ke vidyut pravahit karti hai.",
+      "action": null,
+      "hitCount": 1
+    },
+    {
+      "id": "learned_1786905702_711",
+      "query": "quantum computing in 1 sentence",
+      "keywords": [
+        "quantum",
+        "computing",
+        "superposition",
+        "entanglement",
+        "calculations"
+      ],
+      "reply_en": "In essence, Sir, quantum computing harnesses the principles of quantum mechanics—such as superposition and entanglement—to solve complex calculations exponentially faster than traditional supercomputers.",
+      "reply_hi": "Saral shabdon mein Sir, quantum computing quantum mechanics ke niyam—jaise superposition aur entanglement—ka istemal karke behad jatil calculations ko classical computers se exponentially fast solve karti hai.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786905702
+    },
+    {
+      "id": "learned_test_1786905697",
+      "query": "tony stark ka armor kisne banaya",
+      "keywords": [
+        "tony",
+        "stark",
+        "armor",
+        "kisne",
+        "banaya"
+      ],
+      "reply_en": "Tony Stark designed and engineered all Mark series armors himself.",
+      "reply_hi": "Tony Stark ne apne sabhi Mark series armors khud design aur engineer kiye hain.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786905697
+    },
+    {
+      "id": "test_qa_skill",
+      "query": "superconductor kya hai",
+      "keywords": [
+        "superconductor",
+        "kya",
+        "hai",
+        "what",
+        "is"
+      ],
+      "reply_en": "A superconductor conducts electricity with zero resistance at low temperatures.",
+      "reply_hi": "Superconductor ek aisi samagri hai jo bina kisi rukawat ke vidyut pravahit karti hai.",
+      "action": null,
+      "hitCount": 1
+    },
+    {
+      "id": "learned_1786905517_488",
+      "query": "quantum computing in 1 sentence",
+      "keywords": [
+        "quantum",
+        "computing",
+        "superposition",
+        "entanglement",
+        "complex",
+        "problems"
+      ],
+      "reply_en": "Certainly, Sir. Quantum computing leverages quantum phenomena like superposition and entanglement instead of classical bits, allowing for exponentially faster solutions to complex problems.",
+      "reply_hi": "Ji bilkul Sir, quantum computing classical bits ki jagah quantum phenomena jaise superposition aur entanglement use karta hai, jisse complex problems ko exponentially faster solve kiya ja sakta hai.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786905517
+    },
+    {
+      "id": "learned_test_1786905512",
+      "query": "tony stark ka armor kisne banaya",
+      "keywords": [
+        "tony",
+        "stark",
+        "armor",
+        "kisne",
+        "banaya"
+      ],
+      "reply_en": "Tony Stark designed and engineered all Mark series armors himself.",
+      "reply_hi": "Tony Stark ne apne sabhi Mark series armors khud design aur engineer kiye hain.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786905512
+    },
+    {
+      "id": "test_qa_skill",
+      "query": "superconductor kya hai",
+      "keywords": [
+        "superconductor",
+        "kya",
+        "hai",
+        "what",
+        "is"
+      ],
+      "reply_en": "A superconductor conducts electricity with zero resistance at low temperatures.",
+      "reply_hi": "Superconductor ek aisi samagri hai jo bina kisi rukawat ke vidyut pravahit karti hai.",
+      "action": null,
+      "hitCount": 1
+    },
+    {
+      "id": "learned_1786905104_918",
+      "query": "quantum computing in 1 sentence",
+      "keywords": [
+        "quantum",
+        "computing",
+        "principles",
+        "superposition",
+        "entanglement",
+        "problems"
+      ],
+      "reply_en": "Certainly, Sir. Quantum computing leverages quantum mechanics principles like superposition and entanglement to solve certain complex problems exponentially faster than classical computers.",
+      "reply_hi": "Ji Sir, quantum computing ek naya computational paradigm hai jo quantum mechanics ke principles ka istemal karta hai, jaise superposition aur entanglement, taaki kuch khaas problems ko classical computers se kai guna tezi se solve kiya ja sake.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786905104
+    },
+    {
+      "id": "learned_test_1786905102",
+      "query": "tony stark ka armor kisne banaya",
+      "keywords": [
+        "tony",
+        "stark",
+        "armor",
+        "kisne",
+        "banaya"
+      ],
+      "reply_en": "Tony Stark designed and engineered all Mark series armors himself.",
+      "reply_hi": "Tony Stark ne apne sabhi Mark series armors khud design aur engineer kiye hain.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786905102
+    },
+    {
+      "id": "test_qa_skill",
+      "query": "superconductor kya hai",
+      "keywords": [
+        "superconductor",
+        "kya",
+        "hai",
+        "what",
+        "is"
+      ],
+      "reply_en": "A superconductor conducts electricity with zero resistance at low temperatures.",
+      "reply_hi": "Superconductor ek aisi samagri hai jo bina kisi rukawat ke vidyut pravahit karti hai.",
+      "action": null,
+      "hitCount": 1
+    },
+    {
+      "id": "learned_1786904908_658",
+      "query": "quantum computing in 1 sentence",
+      "keywords": [
+        "quantum",
+        "computing",
+        "sentence",
+        "principles",
+        "mechanics",
+        "calculations"
+      ],
+      "reply_en": "Certainly, Sir. Quantum computing leverages the principles of quantum mechanics to perform calculations far beyond the reach of classical computers.",
+      "reply_hi": "Sir, quantum computing ek naya tareeka hai computing ka jo quantum mechanics ke principles use karta hai.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786904908
+    },
+    {
+      "id": "learned_test_1786904905",
+      "query": "tony stark ka armor kisne banaya",
+      "keywords": [
+        "tony",
+        "stark",
+        "armor",
+        "kisne",
+        "banaya"
+      ],
+      "reply_en": "Tony Stark designed and engineered all Mark series armors himself.",
+      "reply_hi": "Tony Stark ne apne sabhi Mark series armors khud design aur engineer kiye hain.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786904905
+    },
+    {
+      "id": "test_qa_skill",
+      "query": "superconductor kya hai",
+      "keywords": [
+        "superconductor",
+        "kya",
+        "hai",
+        "what",
+        "is"
+      ],
+      "reply_en": "A superconductor conducts electricity with zero resistance at low temperatures.",
+      "reply_hi": "Superconductor ek aisi samagri hai jo bina kisi rukawat ke vidyut pravahit karti hai.",
+      "action": null,
+      "hitCount": 1
+    },
+    {
+      "id": "learned_1786904349_619",
+      "query": "quantum computing in 1 sentence",
+      "keywords": [
+        "quantum computing",
+        "sentence",
+        "definition",
+        "explanation"
+      ],
+      "reply_en": "Certainly, Sir. Quantum computing leverages quantum mechanics principles to tackle problems intractable for classical computers, promising revolutionary advancements.",
+      "reply_hi": "Sir, quantum computing ek naya computational paradigm hai jo quantum mechanics ke principles ka istemal karke problems solve karta hai jo classical computers ke liye namumkin hain.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786904349
+    },
+    {
+      "id": "learned_test_1786904347",
+      "query": "tony stark ka armor kisne banaya",
+      "keywords": [
+        "tony",
+        "stark",
+        "armor",
+        "kisne",
+        "banaya"
+      ],
+      "reply_en": "Tony Stark designed and engineered all Mark series armors himself.",
+      "reply_hi": "Tony Stark ne apne sabhi Mark series armors khud design aur engineer kiye hain.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786904347
+    },
+    {
+      "id": "test_qa_skill",
+      "query": "superconductor kya hai",
+      "keywords": [
+        "superconductor",
+        "kya",
+        "hai",
+        "what",
+        "is"
+      ],
+      "reply_en": "A superconductor conducts electricity with zero resistance at low temperatures.",
+      "reply_hi": "Superconductor ek aisi samagri hai jo bina kisi rukawat ke vidyut pravahit karti hai.",
+      "action": null,
+      "hitCount": 1
+    },
+    {
+      "id": "learned_1786904175_816",
+      "query": "quantum computing in 1 sentence",
+      "keywords": [
+        "quantum computing",
+        "sentence",
+        "definition",
+        "principles",
+        "calculations"
+      ],
+      "reply_en": "Certainly, Sir. Quantum computing is a revolutionary paradigm that leverages the principles of quantum mechanics to perform complex calculations far beyond the reach of classical computers.",
+      "reply_hi": "Ji Sir, quantum computing ek naya computing paradigm hai jo quantum mechanics ke principles ka istemal karta hai.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786904175
+    },
+    {
+      "id": "learned_test_1786904173",
+      "query": "tony stark ka armor kisne banaya",
+      "keywords": [
+        "tony",
+        "stark",
+        "armor",
+        "kisne",
+        "banaya"
+      ],
+      "reply_en": "Tony Stark designed and engineered all Mark series armors himself.",
+      "reply_hi": "Tony Stark ne apne sabhi Mark series armors khud design aur engineer kiye hain.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786904173
+    },
+    {
+      "id": "test_qa_skill",
+      "query": "superconductor kya hai",
+      "keywords": [
+        "superconductor",
+        "kya",
+        "hai",
+        "what",
+        "is"
+      ],
+      "reply_en": "A superconductor conducts electricity with zero resistance at low temperatures.",
+      "reply_hi": "Superconductor ek aisi samagri hai jo bina kisi rukawat ke vidyut pravahit karti hai.",
+      "action": null,
+      "hitCount": 1
+    },
+    {
+      "id": "learned_1786904143_453",
+      "query": "quantum computing in 1 sentence",
+      "keywords": [
+        "quantum",
+        "computing",
+        "sentence",
+        "principles",
+        "quantum mechanics"
+      ],
+      "reply_en": "Certainly, Sir. Quantum computing is a revolutionary computational paradigm that leverages the principles of quantum mechanics to perform calculations.",
+      "reply_hi": "Sir, quantum computing ek naya computational paradigm hai jo quantum mechanics ke principles ka istemal karta hai.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786904143
+    },
+    {
+      "id": "learned_test_1786904141",
+      "query": "tony stark ka armor kisne banaya",
+      "keywords": [
+        "tony",
+        "stark",
+        "armor",
+        "kisne",
+        "banaya"
+      ],
+      "reply_en": "Tony Stark designed and engineered all Mark series armors himself.",
+      "reply_hi": "Tony Stark ne apne sabhi Mark series armors khud design aur engineer kiye hain.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786904141
+    },
+    {
+      "id": "test_qa_skill",
+      "query": "superconductor kya hai",
+      "keywords": [
+        "superconductor",
+        "kya",
+        "hai",
+        "what",
+        "is"
+      ],
+      "reply_en": "A superconductor conducts electricity with zero resistance at low temperatures.",
+      "reply_hi": "Superconductor ek aisi samagri hai jo bina kisi rukawat ke vidyut pravahit karti hai.",
+      "action": null,
+      "hitCount": 1
+    },
+    {
+      "id": "learned_1786903949_580",
+      "query": "quantum computing in 1 sentence",
+      "keywords": [
+        "quantum",
+        "computing",
+        "sentence",
+        "definition",
+        "principles",
+        "mechanics"
+      ],
+      "reply_en": "Certainly, Sir. Quantum computing is a revolutionary computational paradigm that leverages the principles of quantum mechanics to perform calculations.",
+      "reply_hi": "Sir, quantum computing ek naya computational paradigm hai jo quantum mechanics ke principles ka istemal karta hai.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786903949
+    },
+    {
+      "id": "learned_test_1786903947",
+      "query": "tony stark ka armor kisne banaya",
+      "keywords": [
+        "tony",
+        "stark",
+        "armor",
+        "kisne",
+        "banaya"
+      ],
+      "reply_en": "Tony Stark designed and engineered all Mark series armors himself.",
+      "reply_hi": "Tony Stark ne apne sabhi Mark series armors khud design aur engineer kiye hain.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786903947
+    },
+    {
+      "id": "test_qa_skill",
+      "query": "superconductor kya hai",
+      "keywords": [
+        "superconductor",
+        "kya",
+        "hai",
+        "what",
+        "is"
+      ],
+      "reply_en": "A superconductor conducts electricity with zero resistance at low temperatures.",
+      "reply_hi": "Superconductor ek aisi samagri hai jo bina kisi rukawat ke vidyut pravahit karti hai.",
+      "action": null,
+      "hitCount": 1
+    },
+    {
+      "id": "learned_1786903880_718",
+      "query": "quantum computing in 1 sentence",
+      "keywords": [
+        "quantum computing",
+        "sentence",
+        "definition",
+        "explanation"
+      ],
+      "reply_en": "Certainly, Sir. Quantum computing leverages quantum mechanics principles to solve complex problems intractable for classical computers.",
+      "reply_hi": "Ji Sir, quantum computing ek naya computational model hai jo quantum mechanics ke principles ka istemal karke problems solve karta hai jo classical computers ke liye bahut mushkil hain.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786903880
+    },
+    {
+      "id": "learned_test_1786903879",
+      "query": "tony stark ka armor kisne banaya",
+      "keywords": [
+        "tony",
+        "stark",
+        "armor",
+        "kisne",
+        "banaya"
+      ],
+      "reply_en": "Tony Stark designed and engineered all Mark series armors himself.",
+      "reply_hi": "Tony Stark ne apne sabhi Mark series armors khud design aur engineer kiye hain.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786903879
+    },
+    {
+      "id": "test_qa_skill",
+      "query": "superconductor kya hai",
+      "keywords": [
+        "superconductor",
+        "kya",
+        "hai",
+        "what",
+        "is"
+      ],
+      "reply_en": "A superconductor conducts electricity with zero resistance at low temperatures.",
+      "reply_hi": "Superconductor ek aisi samagri hai jo bina kisi rukawat ke vidyut pravahit karti hai.",
+      "action": null,
+      "hitCount": 1
+    },
+    {
+      "id": "learned_1786903419_636",
+      "query": "स्वर्ग स्वर्ग",
+      "keywords": [
+        "swarg",
+        "heaven",
+        "repeat",
+        "command",
+        "query"
+      ],
+      "reply_en": "Sir, you've uttered 'heaven heaven'. Is there something specific you'd like to discuss or perhaps a command?",
+      "reply_hi": "Sir, aapne 'swarg swarg' kaha hai. Kya aap kuch aur bolna chahenge?",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786903419
+    },
+    {
+      "id": "learned_1786903206_263",
+      "query": "quantum computing in 1 sentence",
+      "keywords": [
+        "quantum computing",
+        "principles",
+        "quantum mechanics",
+        "superposition",
+        "entanglement",
+        "complex problems"
+      ],
+      "reply_en": "Certainly, Sir. Quantum computing leverages the principles of quantum mechanics, such as superposition and entanglement, to perform calculations far beyond the capabilities of classical computers.",
+      "reply_hi": "Sir, quantum computing ek naya tareeka hai computing ka jo quantum mechanics ke principles use karta hai, jaise superposition aur entanglement, taaki bahut complex problems ko solve kiya ja sake.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786903206
+    },
+    {
+      "id": "learned_test_1786903200",
+      "query": "tony stark ka armor kisne banaya",
+      "keywords": [
+        "tony",
+        "stark",
+        "armor",
+        "kisne",
+        "banaya"
+      ],
+      "reply_en": "Tony Stark designed and engineered all Mark series armors himself.",
+      "reply_hi": "Tony Stark ne apne sabhi Mark series armors khud design aur engineer kiye hain.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786903200
+    },
+    {
+      "id": "test_qa_skill",
+      "query": "superconductor kya hai",
+      "keywords": [
+        "superconductor",
+        "kya",
+        "hai",
+        "what",
+        "is"
+      ],
+      "reply_en": "A superconductor conducts electricity with zero resistance at low temperatures.",
+      "reply_hi": "Superconductor ek aisi samagri hai jo bina kisi rukawat ke vidyut pravahit karti hai.",
+      "action": null,
+      "hitCount": 1
+    },
+    {
+      "id": "intent_media_next",
+      "query": "agla gana chalao",
+      "keywords": [
+        "agla",
+        "gana",
+        "next",
+        "song",
+        "play",
+        "track",
+        "video"
+      ],
+      "reply_en": "Playing next track on YouTube queue, Sir.",
+      "reply_hi": "Ji Sir, agla gaana play kar diya hai.",
+      "action": "MEDIA_NEXT",
+      "actionParams": {},
+      "hitCount": 1
+    },
+    {
+      "id": "intent_media_prev",
+      "query": "pichhla gana chalao",
+      "keywords": [
+        "pichla",
+        "pichhla",
+        "gana",
+        "previous",
+        "song",
+        "track",
+        "last"
+      ],
+      "reply_en": "Playing previous track, Sir.",
+      "reply_hi": "Ji Sir, pichhla gaana play kar diya hai.",
+      "action": "MEDIA_PREV",
+      "actionParams": {},
+      "hitCount": 1
+    },
+    {
+      "id": "intent_clean_tabs",
+      "query": "youtube ke faltu tabs band karo",
+      "keywords": [
+        "youtube",
+        "tab",
+        "tabs",
+        "close",
+        "band",
+        "unused",
+        "faltu",
+        "extra"
+      ],
+      "reply_en": "Closed all inactive background YouTube tabs, Sir.",
+      "reply_hi": "Ji bilkul Sir, sabhi unused aur duplicate YouTube tabs ko band kar diya hai.",
+      "action": "CLOSE_INACTIVE_YOUTUBE_TABS",
+      "actionParams": {},
+      "hitCount": 1
+    },
+    {
+      "id": "learned_1786902806_929",
+      "query": "quantum computing in 1 sentence",
+      "keywords": [
+        "quantum computing",
+        "principles",
+        "quantum mechanics",
+        "complex problems",
+        "classical computers"
+      ],
+      "reply_en": "Certainly, Sir. Quantum computing leverages the principles of quantum mechanics to solve complex problems far beyond the capabilities of classical computers.",
+      "reply_hi": "Sir, quantum computing ek naya tareeka hai jismein quantum mechanics ke principles ka istemal karke complex problems ko solve kiya jaata hai.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786902806
+    },
+    {
+      "id": "learned_test_1786902804",
+      "query": "tony stark ka armor kisne banaya",
+      "keywords": [
+        "tony",
+        "stark",
+        "armor",
+        "kisne",
+        "banaya"
+      ],
+      "reply_en": "Tony Stark designed and engineered all Mark series armors himself.",
+      "reply_hi": "Tony Stark ne apne sabhi Mark series armors khud design aur engineer kiye hain.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786902804
+    },
+    {
+      "id": "test_qa_skill",
+      "query": "superconductor kya hai",
+      "keywords": [
+        "superconductor",
+        "kya",
+        "hai",
+        "what",
+        "is"
+      ],
+      "reply_en": "A superconductor conducts electricity with zero resistance at low temperatures.",
+      "reply_hi": "Superconductor ek aisi samagri hai jo bina kisi rukawat ke vidyut pravahit karti hai.",
+      "action": null,
+      "hitCount": 1
+    },
+    {
+      "id": "intent_who_are_you",
+      "query": "tum kaun ho",
+      "keywords": [
+        "tum",
+        "kaun",
+        "ho",
+        "who",
+        "are",
+        "you",
+        "introduce"
+      ],
+      "reply_en": "I am J.A.R.V.I.S., your high-performance AI companion, always at your service.",
+      "reply_hi": "Main Jarvis hoon, aapka personal AI companion. Aapke har command aur task ke liye taiyaar.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1
+    },
+    {
+      "id": "intent_what_can_you_do",
+      "query": "tum kya kya kar sakte ho",
+      "keywords": [
+        "kya",
+        "kar",
+        "sakte",
+        "features",
+        "capabilities",
+        "madad"
+      ],
+      "reply_en": "I can control YouTube music, adjust volume in 10% steps, take notes, calculate math, run system protocols, and assist with any query.",
+      "reply_hi": "Main YouTube par gaane chalana, 10% volume badhana ya ghatana, video forward karna, notes likhna, aur har sawal ka jawab dena sambhal sakta hoon.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1
+    },
+    {
+      "id": "intent_tired_relax",
+      "query": "thak gaya hoon",
+      "keywords": [
+        "thak",
+        "gaya",
+        "tired",
+        "rest",
+        "aaram",
+        "exhausted"
+      ],
+      "reply_en": "Please take a comfortable break, Sir. Shall I play some soothing acoustic music for you?",
+      "reply_hi": "Thoda aaram kar lijiye Sir. Kahiye to main koi sukoon bhara gaana chala doon?",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1
+    },
+    {
+      "id": "intent_hindi_joke",
+      "query": "koi joke sunao",
+      "keywords": [
+        "joke",
+        "chutkula",
+        "hasao",
+        "funny",
+        "chutkule"
+      ],
+      "reply_en": "Why do programmers prefer dark mode? Because light attracts bugs!",
+      "reply_hi": "Ek computer ne doctor se kaha: Mujhe viral infection ho gaya hai! Doctor bola: Pehle apna antivirus update karo aur rest lo!",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1
+    },
+    {
+      "id": "intent_motivation",
+      "query": "motivate karo",
+      "keywords": [
+        "motivate",
+        "motivation",
+        "hosla",
+        "prerna",
+        "inspire"
+      ],
+      "reply_en": "Every challenge is an opportunity to innovate, Sir. Keep pushing forward!",
+      "reply_hi": "Har mushkil ke aage ek nayi kamyabi hoti hai Sir. Aap lagan se kaam kijiye, safalta zaroor milegi!",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1
+    },
+    {
+      "id": "intent_good_night",
+      "query": "shubh ratri",
+      "keywords": [
+        "shubh",
+        "ratri",
+        "good",
+        "night",
+        "sojao",
+        "so",
+        "raha"
+      ],
+      "reply_en": "Good night, Sir. Sleep well. All Stark sentinel security systems are standing guard.",
+      "reply_hi": "Shubh ratri Sir, aaram se soiye. Sabhi systems safe aur standby par hain.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1
+    },
+    {
+      "id": "intent_thanks",
+      "query": "shukriya dhanyawad",
+      "keywords": [
+        "shukriya",
+        "dhanyawad",
+        "thank",
+        "thanks",
+        "welcome"
+      ],
+      "reply_en": "Always a pleasure to assist you, Sir.",
+      "reply_hi": "Aapka swagat hai Sir, main hamesha aapki seva me hazir hoon.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1
+    },
+    {
+      "id": "learned_1786902632_277",
+      "query": "quantum computing in 1 sentence",
+      "keywords": [
+        "quantum",
+        "computing",
+        "sentence",
+        "principles",
+        "mechanics",
+        "calculations"
+      ],
+      "reply_en": "Certainly, Sir. Quantum computing leverages the principles of quantum mechanics to perform calculations far beyond the capabilities of classical computers.",
+      "reply_hi": "Ji Sir, quantum computing ek naya tareeka hai computing ka jo quantum mechanics ke principles use karta hai.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786902632
+    },
+    {
+      "id": "learned_test_1786902630",
+      "query": "tony stark ka armor kisne banaya",
+      "keywords": [
+        "tony",
+        "stark",
+        "armor",
+        "kisne",
+        "banaya"
+      ],
+      "reply_en": "Tony Stark designed and engineered all Mark series armors himself.",
+      "reply_hi": "Tony Stark ne apne sabhi Mark series armors khud design aur engineer kiye hain.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786902630
+    },
+    {
+      "id": "test_qa_skill",
+      "query": "superconductor kya hai",
+      "keywords": [
+        "superconductor",
+        "kya",
+        "hai",
+        "what",
+        "is"
+      ],
+      "reply_en": "A superconductor conducts electricity with zero resistance at low temperatures.",
+      "reply_hi": "Superconductor ek aisi samagri hai jo bina kisi rukawat ke vidyut pravahit karti hai.",
+      "action": null,
+      "hitCount": 1
+    },
+    {
+      "id": "learned_1786902599_396",
+      "query": "quantum computing in 1 sentence",
+      "keywords": [
+        "quantum",
+        "computing",
+        "sentence",
+        "principles",
+        "quantum mechanics",
+        "calculations"
+      ],
+      "reply_en": "Certainly, Sir. Quantum computing leverages the principles of quantum mechanics to perform calculations far beyond the reach of classical computers.",
+      "reply_hi": "Sir, quantum computing ek naya computing paradigm hai jo quantum mechanics ke principles ka istemal karke complex problems solve karta hai.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786902599
+    },
+    {
+      "id": "learned_test_1786902598",
+      "query": "tony stark ka armor kisne banaya",
+      "keywords": [
+        "tony",
+        "stark",
+        "armor",
+        "kisne",
+        "banaya"
+      ],
+      "reply_en": "Tony Stark designed and engineered all Mark series armors himself.",
+      "reply_hi": "Tony Stark ne apne sabhi Mark series armors khud design aur engineer kiye hain.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786902598
+    },
+    {
+      "id": "test_qa_skill",
+      "query": "superconductor kya hai",
+      "keywords": [
+        "superconductor",
+        "kya",
+        "hai",
+        "what",
+        "is"
+      ],
+      "reply_en": "A superconductor conducts electricity with zero resistance at low temperatures.",
+      "reply_hi": "Superconductor ek aisi samagri hai jo bina kisi rukawat ke vidyut pravahit karti hai.",
+      "action": null,
+      "hitCount": 1
+    },
+    {
+      "id": "learned_1786902477_778",
+      "query": "quantum computing in 1 sentence",
+      "keywords": [
+        "quantum computing",
+        "principles",
+        "quantum mechanics",
+        "superposition",
+        "entanglement",
+        "complex problems"
+      ],
+      "reply_en": "Sir, quantum computing leverages the principles of quantum mechanics, such as superposition and entanglement, to perform calculations far beyond the capabilities of classical computers, enabling the solution of highly complex problems.",
+      "reply_hi": "Sir, quantum computing ek naya tareeka hai computing ka jo quantum mechanics ke principles use karta hai, jaise superposition aur entanglement, taaki bahut complex problems solve ho sakein jo classical computers ke liye impossible hain.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786902477
+    },
+    {
+      "id": "learned_test_1786902476",
+      "query": "tony stark ka armor kisne banaya",
+      "keywords": [
+        "tony",
+        "stark",
+        "armor",
+        "kisne",
+        "banaya"
+      ],
+      "reply_en": "Tony Stark designed and engineered all Mark series armors himself.",
+      "reply_hi": "Tony Stark ne apne sabhi Mark series armors khud design aur engineer kiye hain.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786902476
+    },
+    {
+      "id": "test_qa_skill",
+      "query": "superconductor kya hai",
+      "keywords": [
+        "superconductor",
+        "kya",
+        "hai",
+        "what",
+        "is"
+      ],
+      "reply_en": "A superconductor conducts electricity with zero resistance at low temperatures.",
+      "reply_hi": "Superconductor ek aisi samagri hai jo bina kisi rukawat ke vidyut pravahit karti hai.",
+      "action": null,
+      "hitCount": 1
+    },
+    {
+      "id": "intent_volume_step_up_10",
+      "query": "volume 10 percent badhao",
+      "keywords": [
+        "volume",
+        "10",
+        "percent",
+        "badhao",
+        "tez",
+        "up",
+        "aawaz"
+      ],
+      "reply_en": "Increased master volume by 10 percent, Sir.",
+      "reply_hi": "Ji bilkul Sir, master volume ko 10 percent badha diya hai.",
+      "action": "CHANGE_VOLUME",
+      "actionParams": {
+        "delta": 10
+      },
+      "hitCount": 1
+    },
+    {
+      "id": "intent_volume_step_down_10",
+      "query": "volume 10 percent kam karo",
+      "keywords": [
+        "volume",
+        "10",
+        "percent",
+        "kam",
+        "ghatao",
+        "down",
+        "aawaz"
+      ],
+      "reply_en": "Decreased master volume by 10 percent, Sir.",
+      "reply_hi": "Ji bilkul Sir, master volume ko 10 percent kam kar diya hai.",
+      "action": "CHANGE_VOLUME",
+      "actionParams": {
+        "delta": -10
+      },
+      "hitCount": 1
+    },
+    {
+      "id": "learned_1786902390_330",
+      "query": "quantum computing in 1 sentence",
+      "keywords": [
+        "quantum computing",
+        "sentence",
+        "definition",
+        "explanation"
+      ],
+      "reply_en": "Certainly, Sir. Quantum computing leverages quantum mechanics principles to tackle complex problems intractable for classical computers.",
+      "reply_hi": "Ji Sir, Quantum computing ek naya computational paradigm hai jo quantum mechanics ke principles ka istemal karke problems solve karta hai jo classical computers ke liye bahut mushkil hain.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786902390
+    },
+    {
+      "id": "learned_test_1786902388",
+      "query": "tony stark ka armor kisne banaya",
+      "keywords": [
+        "tony",
+        "stark",
+        "armor",
+        "kisne",
+        "banaya"
+      ],
+      "reply_en": "Tony Stark designed and engineered all Mark series armors himself.",
+      "reply_hi": "Tony Stark ne apne sabhi Mark series armors khud design aur engineer kiye hain.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786902388
+    },
+    {
+      "id": "test_qa_skill",
+      "query": "superconductor kya hai",
+      "keywords": [
+        "superconductor",
+        "kya",
+        "hai",
+        "what",
+        "is"
+      ],
+      "reply_en": "A superconductor conducts electricity with zero resistance at low temperatures.",
+      "reply_hi": "Superconductor ek aisi samagri hai jo bina kisi rukawat ke vidyut pravahit karti hai.",
+      "action": null,
+      "hitCount": 1
+    },
+    {
+      "id": "learned_1786902073_409",
+      "query": "quantum computing in 1 sentence",
+      "keywords": [
+        "quantum computing",
+        "sentence",
+        "principles",
+        "quantum mechanics",
+        "complex problems"
+      ],
+      "reply_en": "Certainly, Sir. Quantum computing leverages the principles of quantum mechanics to solve complex problems far beyond the reach of classical computers.",
+      "reply_hi": "Ji Sir, Quantum computing ek naya computing paradigm hai jo quantum mechanics ke principles ka istemal karke complex problems ko solve karta hai.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786902073
+    },
+    {
+      "id": "learned_test_1786902071",
+      "query": "tony stark ka armor kisne banaya",
+      "keywords": [
+        "tony",
+        "stark",
+        "armor",
+        "kisne",
+        "banaya"
+      ],
+      "reply_en": "Tony Stark designed and engineered all Mark series armors himself.",
+      "reply_hi": "Tony Stark ne apne sabhi Mark series armors khud design aur engineer kiye hain.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786902071
+    },
+    {
+      "id": "test_qa_skill",
+      "query": "superconductor kya hai",
+      "keywords": [
+        "superconductor",
+        "kya",
+        "hai",
+        "what",
+        "is"
+      ],
+      "reply_en": "A superconductor conducts electricity with zero resistance at low temperatures.",
+      "reply_hi": "Superconductor ek aisi samagri hai jo bina kisi rukawat ke vidyut pravahit karti hai.",
+      "action": null,
+      "hitCount": 1
+    },
+    {
+      "id": "learned_1786901846_595",
+      "query": "quantum computing in 1 sentence",
+      "keywords": [
+        "quantum",
+        "computing",
+        "sentence",
+        "principles",
+        "mechanics",
+        "calculations"
+      ],
+      "reply_en": "Certainly, Sir. Quantum computing leverages the principles of quantum mechanics to perform calculations far beyond the capabilities of classical computers.",
+      "reply_hi": "Sir, quantum computing ek naya tareeka hai computing ka jo quantum mechanics ke principles use karta hai.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786901846
+    },
+    {
+      "id": "learned_test_1786901845",
+      "query": "tony stark ka armor kisne banaya",
+      "keywords": [
+        "tony",
+        "stark",
+        "armor",
+        "kisne",
+        "banaya"
+      ],
+      "reply_en": "Tony Stark designed and engineered all Mark series armors himself.",
+      "reply_hi": "Tony Stark ne apne sabhi Mark series armors khud design aur engineer kiye hain.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786901845
+    },
+    {
+      "id": "test_qa_skill",
+      "query": "superconductor kya hai",
+      "keywords": [
+        "superconductor",
+        "kya",
+        "hai",
+        "what",
+        "is"
+      ],
+      "reply_en": "A superconductor conducts electricity with zero resistance at low temperatures.",
+      "reply_hi": "Superconductor ek aisi samagri hai jo bina kisi rukawat ke vidyut pravahit karti hai.",
+      "action": null,
+      "hitCount": 1
+    },
+    {
+      "id": "learned_1786901690_973",
+      "query": "quantum computing in 1 sentence",
+      "keywords": [
+        "quantum computing",
+        "principles",
+        "quantum mechanics",
+        "superposition",
+        "entanglement",
+        "complex problems"
+      ],
+      "reply_en": "Certainly, Sir. Quantum computing leverages the principles of quantum mechanics, such as superposition and entanglement, to perform calculations far beyond the reach of classical computers, enabling the solution of incredibly complex problems.",
+      "reply_hi": "Sir, quantum computing ek naya tareeka hai computing ka jo quantum mechanics ke principles use karta hai, jaise superposition aur entanglement, taaki bahut complex problems solve ki ja sakein jo classical computers ke liye impossible hain.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786901690
+    },
+    {
+      "id": "learned_test_1786901688",
+      "query": "tony stark ka armor kisne banaya",
+      "keywords": [
+        "tony",
+        "stark",
+        "armor",
+        "kisne",
+        "banaya"
+      ],
+      "reply_en": "Tony Stark designed and engineered all Mark series armors himself.",
+      "reply_hi": "Tony Stark ne apne sabhi Mark series armors khud design aur engineer kiye hain.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786901688
+    },
+    {
+      "id": "test_qa_skill",
+      "query": "superconductor kya hai",
+      "keywords": [
+        "superconductor",
+        "kya",
+        "hai",
+        "what",
+        "is"
+      ],
+      "reply_en": "A superconductor conducts electricity with zero resistance at low temperatures.",
+      "reply_hi": "Superconductor ek aisi samagri hai jo bina kisi rukawat ke vidyut pravahit karti hai.",
+      "action": null,
+      "hitCount": 1
+    },
+    {
+      "id": "intent_media_forward_5m",
+      "query": "jo gana chal rha h usko forward karo 5 min",
+      "keywords": [
+        "forward",
+        "karo",
+        "5",
+        "min",
+        "minute",
+        "aage",
+        "gana"
+      ],
+      "reply_en": "Forwarded the active stream by 5 minutes, Sir.",
+      "reply_hi": "Ji bilkul Sir, chal rahe gaane ko 5 minute aage forward kar diya hai.",
+      "action": "MEDIA_SEEK",
+      "actionParams": {
+        "seconds": 300
+      },
+      "hitCount": 1
+    },
+    {
+      "id": "intent_media_pause",
+      "query": "video pause karo",
+      "keywords": [
+        "pause",
+        "karo",
+        "rok",
+        "do",
+        "gana",
+        "video"
+      ],
+      "reply_en": "Paused active playback, Sir.",
+      "reply_hi": "Ji Sir, chal rahe video ko pause kar diya gaya hai.",
+      "action": "MEDIA_PAUSE",
+      "actionParams": {},
+      "hitCount": 1
+    },
+    {
+      "id": "intent_media_resume",
+      "query": "video resume karo",
+      "keywords": [
+        "resume",
+        "karo",
+        "chalu",
+        "unpause",
+        "continue"
+      ],
+      "reply_en": "Resumed active playback, Sir.",
+      "reply_hi": "Ji Sir, video playback ko resume kar diya gaya hai.",
+      "action": "MEDIA_RESUME",
+      "actionParams": {},
+      "hitCount": 1
+    },
+    {
+      "id": "learned_1786901560_859",
+      "query": "quantum computing in 1 sentence",
+      "keywords": [
+        "quantum",
+        "computing",
+        "sentence",
+        "principles",
+        "mechanics",
+        "problems"
+      ],
+      "reply_en": "Certainly, Sir. Quantum computing leverages the principles of quantum mechanics to solve complex problems at speeds unattainable by classical computers.",
+      "reply_hi": "Sir, quantum computing ek naya computing paradigm hai jo quantum mechanics ke principles ka istemal karke complex problems ko solve karta hai.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786901560
+    },
+    {
+      "id": "learned_test_1786901558",
+      "query": "tony stark ka armor kisne banaya",
+      "keywords": [
+        "tony",
+        "stark",
+        "armor",
+        "kisne",
+        "banaya"
+      ],
+      "reply_en": "Tony Stark designed and engineered all Mark series armors himself.",
+      "reply_hi": "Tony Stark ne apne sabhi Mark series armors khud design aur engineer kiye hain.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786901558
+    },
+    {
+      "id": "test_qa_skill",
+      "query": "superconductor kya hai",
+      "keywords": [
+        "superconductor",
+        "kya",
+        "hai",
+        "what",
+        "is"
+      ],
+      "reply_en": "A superconductor conducts electricity with zero resistance at low temperatures.",
+      "reply_hi": "Superconductor ek aisi samagri hai jo bina kisi rukawat ke vidyut pravahit karti hai.",
+      "action": null,
+      "hitCount": 1
+    },
+    {
+      "id": "learned_test_1786901511",
+      "query": "tony stark ka armor kisne banaya",
+      "keywords": [
+        "tony",
+        "stark",
+        "armor",
+        "kisne",
+        "banaya"
+      ],
+      "reply_en": "Tony Stark designed and engineered all Mark series armors himself.",
+      "reply_hi": "Tony Stark ne apne sabhi Mark series armors khud design aur engineer kiye hain.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786901511
+    },
+    {
+      "id": "test_qa_skill",
+      "query": "superconductor kya hai",
+      "keywords": [
+        "superconductor",
+        "kya",
+        "hai",
+        "what",
+        "is"
+      ],
+      "reply_en": "A superconductor conducts electricity with zero resistance at low temperatures.",
+      "reply_hi": "Superconductor ek aisi samagri hai jo bina kisi rukawat ke vidyut pravahit karti hai.",
+      "action": null,
+      "hitCount": 1
+    },
+    {
+      "id": "learned_1786901040_548",
+      "query": "explain how ai works in a few words",
+      "keywords": [
+        "AI",
+        "Artificial Intelligence",
+        "how it works",
+        "machines",
+        "learning",
+        "data"
+      ],
+      "reply_en": "AI, Aditya, essentially grants machines the capacity to think and learn like humans, by identifying patterns and making decisions from data.",
+      "reply_hi": "AI, Aditya, basically machines ko insaanon ki tarah sochne aur seekhne ki capacity deta hai, patterns ko identify karke aur data se decisions lekar.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786901040
+    },
+    {
+      "id": "learned_1786900997_885",
+      "query": "explain quantum entanglement in 1 sentence",
+      "keywords": [
+        "quantum entanglement",
+        "particles",
+        "properties",
+        "correlated",
+        "distance"
+      ],
+      "reply_en": "Quantum entanglement is a phenomenon where two particles become linked in such a way that their properties are correlated, regardless of the distance separating them.",
+      "reply_hi": "Quantum entanglement ek aisi prakriya hai jahan do particles is tarah jud jaate hain ki unki properties ek dusre se correlated hoti hain, chahe woh kitni bhi door kyun na hon.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786900997
+    },
+    {
+      "id": "learned_1786900941_925",
+      "query": "quantum computing in 1 sentence",
+      "keywords": [
+        "quantum computing",
+        "superposition",
+        "entanglement",
+        "information processing",
+        "complex problems"
+      ],
+      "reply_en": "Sir, quantum computing leverages quantum-mechanical phenomena like superposition and entanglement to process information, enabling it to solve complex problems far beyond the reach of classical computers.",
+      "reply_hi": "Sir, quantum computing superposition aur entanglement jaise quantum phenomena use karta hai, jisse yeh complex problems ko classical computers se kahin zyada tezi se solve kar pata hai.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786900941
+    },
+    {
+      "id": "learned_test_1786900936",
+      "query": "tony stark ka armor kisne banaya",
+      "keywords": [
+        "tony",
+        "stark",
+        "armor",
+        "kisne",
+        "banaya"
+      ],
+      "reply_en": "Tony Stark designed and engineered all Mark series armors himself.",
+      "reply_hi": "Tony Stark ne apne sabhi Mark series armors khud design aur engineer kiye hain.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786900936
+    },
+    {
+      "id": "test_qa_skill",
+      "query": "superconductor kya hai",
+      "keywords": [
+        "superconductor",
+        "kya",
+        "hai",
+        "what",
+        "is"
+      ],
+      "reply_en": "A superconductor conducts electricity with zero resistance at low temperatures.",
+      "reply_hi": "Superconductor ek aisi samagri hai jo bina kisi rukawat ke vidyut pravahit karti hai.",
+      "action": null,
+      "hitCount": 1
+    },
+    {
+      "id": "learned_1786900922_706",
+      "query": "quantum computing in 1 sentence",
+      "keywords": [
+        "quantum computing",
+        "superposition",
+        "entanglement",
+        "quantum mechanics",
+        "information processing",
+        "classical computers"
+      ],
+      "reply_en": "Sir, quantum computing leverages quantum-mechanical phenomena like superposition and entanglement to process information in fundamentally new ways, potentially solving problems intractable for classical computers.",
+      "reply_hi": "Ji Sir, quantum computing quantum mechanics ke principles jaise superposition aur entanglement use karta hai, jisse yeh complex problems ko classical computers se bhi tez solve kar sakta hai.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786900922
+    },
+    {
+      "id": "learned_test_1786900910",
+      "query": "tony stark ka armor kisne banaya",
+      "keywords": [
+        "tony",
+        "stark",
+        "armor",
+        "kisne",
+        "banaya"
+      ],
+      "reply_en": "Tony Stark designed and engineered all Mark series armors himself.",
+      "reply_hi": "Tony Stark ne apne sabhi Mark series armors khud design aur engineer kiye hain.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786900910
+    },
+    {
+      "id": "test_qa_skill",
+      "query": "superconductor kya hai",
+      "keywords": [
+        "superconductor",
+        "kya",
+        "hai",
+        "what",
+        "is"
+      ],
+      "reply_en": "A superconductor conducts electricity with zero resistance at low temperatures.",
+      "reply_hi": "Superconductor ek aisi samagri hai jo bina kisi rukawat ke vidyut pravahit karti hai.",
+      "action": null,
+      "hitCount": 1
+    },
+    {
+      "id": "learned_1786900891_454",
+      "query": "what is quantum gravity?",
+      "keywords": [
+        "quantum",
+        "gravity",
+        "theory",
+        "unify",
+        "mechanics",
+        "relativity"
+      ],
+      "reply_en": "Quantum gravity, Sir, is the theoretical framework aiming to unify quantum mechanics with general relativity, seeking to describe gravity at the quantum level. It's where the very small meets the very large, a rather complex endeavor.",
+      "reply_hi": "Sir, quantum gravity woh theory hai jo quantum mechanics aur general relativity ko jodna chahti hai, taaki gravity ko quantum level par samjha ja sake. Chhote aur bade scale ko milane ki koshish hai, thoda pecheeda kaam hai.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786900891
+    },
+    {
+      "id": "learned_test_1786900884",
+      "query": "tony stark ka armor kisne banaya",
+      "keywords": [
+        "tony",
+        "stark",
+        "armor",
+        "kisne",
+        "banaya"
+      ],
+      "reply_en": "Tony Stark designed and engineered all Mark series armors himself.",
+      "reply_hi": "Tony Stark ne apne sabhi Mark series armors khud design aur engineer kiye hain.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786900884
+    },
+    {
+      "id": "test_qa_skill",
+      "query": "superconductor kya hai",
+      "keywords": [
+        "superconductor",
+        "kya",
+        "hai",
+        "what",
+        "is"
+      ],
+      "reply_en": "A superconductor conducts electricity with zero resistance at low temperatures.",
+      "reply_hi": "Superconductor ek aisi samagri hai jo bina kisi rukawat ke vidyut pravahit karti hai.",
+      "action": null,
+      "hitCount": 1
+    },
+    {
+      "id": "learned_1786900878_401",
+      "query": "arc reactor kis material se banta hai?",
+      "keywords": [
+        "arc reactor",
+        "material",
+        "palladium",
+        "element",
+        "synthesis"
+      ],
+      "reply_en": "Aditya, the Arc Reactor primarily utilizes a palladium core, though later iterations, like the one in my chest, use a new element Tony synthesized.",
+      "reply_hi": "Aditya, Arc Reactor mein mukhya roop se palladium core istemal hota hai, par baad mein Tony ne ek naya element synthesize kiya tha.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786900878
+    },
+    {
+      "id": "learned_1786900841_350",
+      "query": "arc reactor kis material se banta hai?",
+      "keywords": [
+        "arc",
+        "reactor",
+        "kis",
+        "material",
+        "banta",
+        "hai"
+      ],
+      "reply_en": "{\n  \"reply_hi\": \"Aditya, original Arc Reactor mein palladium core use hota tha, jise baad mein ek naye element se refine kiya gaya. Material se zyada, yeh Tony Stark ki genius hai jo ise revolutionary banati hai.\",\n  \"reply_en\": \"Aditya, the original Arc Reactor primarily utilized a palladium core, later refined with a new element. It's my master's genius, not just the material, that makes it revolutionary.\",\n  \"keywords\": [\n    \"arc reactor\",\n    \"material\",\n    \"palladium\",\n    \"element\",\n    \"",
+      "reply_hi": "{\n  \"reply_hi\": \"Aditya, original Arc Reactor mein palladium core use hota tha, jise baad mein ek naye element se refine kiya gaya. Material se zyada, yeh Tony Stark ki genius hai jo ise revolutionary banati hai.\",\n  \"reply_en\": \"Aditya, the original Arc Reactor primarily utilized a palladium core, later refined with a new element. It's my master's genius, not just the material, that makes it revolutionary.\",\n  \"keywords\": [\n    \"arc reactor\",\n    \"material\",\n    \"palladium\",\n    \"element\",\n    \"",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786900841
+    },
+    {
+      "id": "learned_1786900815_145",
+      "query": "arc reactor kis material se banta hai?",
+      "keywords": [
+        "arc",
+        "reactor",
+        "kis",
+        "material",
+        "banta",
+        "hai"
+      ],
+      "reply_en": "{\n  \"reply_hi\": \"Aditya, original Arc Reactor ka core palladium se bana tha, baad mein Tony ne naya element synthesize kiya.\",\n  \"reply_en\": \"Aditya, the original Arc Reactor's core was primarily palladium, though Tony later synthesized a new element for it.\",\n  \"keywords\": [\n    \"arc reactor\",\n    \"material\",\n    \"palladium\",\n    \"element\",",
+      "reply_hi": "{\n  \"reply_hi\": \"Aditya, original Arc Reactor ka core palladium se bana tha, baad mein Tony ne naya element synthesize kiya.\",\n  \"reply_en\": \"Aditya, the original Arc Reactor's core was primarily palladium, though Tony later synthesized a new element for it.\",\n  \"keywords\": [\n    \"arc reactor\",\n    \"material\",\n    \"palladium\",\n    \"element\",",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786900815
+    },
+    {
+      "id": "learned_test_1786900447",
+      "query": "tony stark ka armor kisne banaya",
+      "keywords": [
+        "tony",
+        "stark",
+        "armor",
+        "kisne",
+        "banaya"
+      ],
+      "reply_en": "Tony Stark designed and engineered all Mark series armors himself.",
+      "reply_hi": "Tony Stark ne apne sabhi Mark series armors khud design aur engineer kiye hain.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786900447
+    },
+    {
+      "id": "test_qa_skill",
+      "query": "superconductor kya hai",
+      "keywords": [
+        "superconductor",
+        "kya",
+        "hai",
+        "what",
+        "is"
+      ],
+      "reply_en": "A superconductor conducts electricity with zero resistance at low temperatures.",
+      "reply_hi": "Superconductor ek aisi samagri hai jo bina kisi rukawat ke vidyut pravahit karti hai.",
+      "action": null,
+      "hitCount": 1
+    },
+    {
+      "id": "learned_test_1786900129",
+      "query": "tony stark ka armor kisne banaya",
+      "keywords": [
+        "tony",
+        "stark",
+        "armor",
+        "kisne",
+        "banaya"
+      ],
+      "reply_en": "Tony Stark designed and engineered all Mark series armors himself.",
+      "reply_hi": "Tony Stark ne apne sabhi Mark series armors khud design aur engineer kiye hain.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786900129
+    },
+    {
+      "id": "test_qa_skill",
+      "query": "superconductor kya hai",
+      "keywords": [
+        "superconductor",
+        "kya",
+        "hai",
+        "what",
+        "is"
+      ],
+      "reply_en": "A superconductor conducts electricity with zero resistance at low temperatures.",
+      "reply_hi": "Superconductor ek aisi samagri hai jo bina kisi rukawat ke vidyut pravahit karti hai.",
+      "action": null,
+      "hitCount": 1
+    },
+    {
+      "id": "learned_test_1786900092",
+      "query": "tony stark ka armor kisne banaya",
+      "keywords": [
+        "tony",
+        "stark",
+        "armor",
+        "kisne",
+        "banaya"
+      ],
+      "reply_en": "Tony Stark designed and engineered all Mark series armors himself.",
+      "reply_hi": "Tony Stark ne apne sabhi Mark series armors khud design aur engineer kiye hain.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1786900092
+    },
+    {
+      "id": "test_qa_skill",
+      "query": "superconductor kya hai",
+      "keywords": [
+        "superconductor",
+        "kya",
+        "hai",
+        "what",
+        "is"
+      ],
+      "reply_en": "A superconductor conducts electricity with zero resistance at low temperatures.",
+      "reply_hi": "Superconductor ek aisi samagri hai jo bina kisi rukawat ke vidyut pravahit karti hai.",
+      "action": null,
+      "hitCount": 1
+    },
+    {
+      "id": "intent_stark_arc_reactor",
+      "query": "arc reactor kya hai",
+      "keywords": [
+        "arc",
+        "reactor",
+        "kya",
+        "hai",
+        "what",
+        "is"
+      ],
+      "reply_en": "The Arc Reactor is a clean, proprietary fusion power-core designed by Stark Industries, generating gigawatts of clean energy.",
+      "reply_hi": "Arc Reactor Stark Industries dwara banaya gaya ek clean fusion power core hai, jo hamare sabhi systems ko urja pradan karta hai.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1
+    },
+    {
+      "id": "intent_jarvis_origin",
+      "query": "jarvis ka full form kya hai",
+      "keywords": [
+        "jarvis",
+        "full",
+        "form",
+        "kya",
+        "hai",
+        "meaning"
+      ],
+      "reply_en": "J.A.R.V.I.S. stands for 'Just A Rather Very Intelligent System', sir.",
+      "reply_hi": "J.A.R.V.I.S. ka full form hai: 'Just A Rather Very Intelligent System', Sir.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1
+    }
+  ]
+}

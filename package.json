@@ -1,0 +1,27 @@
+{
+  "name": "jarvis-assistant",
+  "version": "2.0.0",
+  "description": "Next-Gen Proactive Voice Assistant with Iron Man HUD, Mac Control & Android In-App Search",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "qrcode": "^1.5.4",
+    "ws": "^8.18.0"
+  },
+  "keywords": [
+    "jarvis",
+    "voice-assistant",
+    "ironman-hud",
+    "mac-automation",
+    "android-bridge"
+  ],
+  "author": "Aditya",
+  "license": "MIT"
+}
