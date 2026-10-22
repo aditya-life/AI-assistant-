@@ -284,11 +284,12 @@ class JarvisCore {
     }
 
     this.recognition = new SpeechRecognition();
-    this.recognition.continuous = !this.isMobile;
+    this.recognition.continuous = true;
     this.recognition.interimResults = true;
     this.recognition.lang = this.currentLanguage || 'hi-IN';
     this.isStartingRecognition = false;
     this.speechBuffer = '';
+    this.lastInterimTranscript = '';
     this.speechDebounceTimer = null;
 
     const commitSpokenSentence = () => {
@@ -296,14 +297,15 @@ class JarvisCore {
         clearTimeout(this.speechDebounceTimer);
         this.speechDebounceTimer = null;
       }
-      const fullText = this.speechBuffer.trim();
+      const pending = (this.speechBuffer + ' ' + (this.lastInterimTranscript || '')).trim();
       this.speechBuffer = '';
-      if (fullText && fullText.length > 1) {
-        console.log(`[JARVIS HEARD on ${this.deviceType}]`, fullText);
+      this.lastInterimTranscript = '';
+      if (pending && pending.length > 1) {
+        console.log(`[AADI HEARD on ${this.deviceType}]`, pending);
         window.audioFX.playWake();
         this.triggerHaptic([40]);
         this.audioLevel = 1.0;
-        this.handleUserInput(fullText);
+        this.handleUserInput(pending);
       }
     };
 
@@ -311,6 +313,7 @@ class JarvisCore {
       this.isListening = true;
       this.isStartingRecognition = false;
       this.speechBuffer = '';
+      this.lastInterimTranscript = '';
       this.updateVoiceStatus('LISTENING... SPEAK NOW 🎙️');
       const micBtn = document.getElementById('btnMicTrigger');
       if (micBtn) micBtn.classList.add('listening');
@@ -336,27 +339,28 @@ class JarvisCore {
       if (finals) {
         this.speechBuffer += finals;
       }
+      this.lastInterimTranscript = interim;
 
       const displayLive = (this.speechBuffer + interim).trim();
       if (displayLive) {
         this.updateVoiceStatus(`🎙️ "${displayLive}"`);
       }
 
-      // 750ms natural pause debouncer: collects full sentence before executing
+      // 1200ms natural conversational pause debouncer (ChatGPT Voice style)
       if (this.speechDebounceTimer) clearTimeout(this.speechDebounceTimer);
-      this.speechDebounceTimer = setTimeout(commitSpokenSentence, 750);
+      this.speechDebounceTimer = setTimeout(commitSpokenSentence, 1200);
     };
 
     this.recognition.onspeechend = () => {
       if (this.speechDebounceTimer) {
         clearTimeout(this.speechDebounceTimer);
-        this.speechDebounceTimer = setTimeout(commitSpokenSentence, 350);
+        this.speechDebounceTimer = setTimeout(commitSpokenSentence, 850);
       }
     };
 
     this.recognition.onerror = (event) => {
       this.isStartingRecognition = false;
-      console.warn('[JARVIS] Speech recognition error:', event.error);
+      console.warn('[AADI] Speech recognition error:', event.error);
       if (event.error === 'not-allowed') {
         this.updateVoiceStatus('MIC BLOCKED: ALLOW PERMISSION');
       } else if (event.error === 'no-speech') {
@@ -374,7 +378,7 @@ class JarvisCore {
       if (micBtn) micBtn.classList.remove('listening');
 
       // Commit any pending buffer on recognition end
-      if (this.speechBuffer.trim()) {
+      if (this.speechBuffer.trim() || (this.lastInterimTranscript && this.lastInterimTranscript.trim())) {
         commitSpokenSentence();
       }
 
@@ -382,7 +386,7 @@ class JarvisCore {
       if ((this.continuousMode || this.awaitingFollowUp) && !this.isSpeaking) {
         setTimeout(() => {
           this.startListeningSafely();
-        }, 200);
+        }, 300);
       } else {
         this.updateVoiceStatus('STANDBY // TAP MIC');
         if (!this.isSpeaking) {
@@ -504,6 +508,36 @@ class JarvisCore {
       } catch (e) {}
     }
     this.isRecordingAudio = false;
+  }
+
+  async unlockMobileAudioAndMic() {
+    try {
+      if (window.audioFX) {
+        window.audioFX.init();
+      }
+      if (this.synthesis) {
+        if (this.synthesis.paused) this.synthesis.resume();
+        const silent = new SpeechSynthesisUtterance(' ');
+        silent.volume = 0.01;
+        this.synthesis.speak(silent);
+      }
+    } catch (e) {
+      console.warn('[AADI AUDIO UNLOCK]', e);
+    }
+  }
+
+  normalizeUserInput(raw) {
+    if (!raw) return '';
+    let s = raw.toLowerCase().trim();
+    // Multi-script & phonetic normalizations
+    s = s.replace(/\bu\s*tube\b|\byou\s*tube\b/g, 'youtube')
+         .replace(/\bv\s*s\s*code\b|\bvs\s*code\b|\bwe\s*es\s*code\b/g, 'vs code')
+         .replace(/\bchala\s*de\b|\bchalao\s*na\b|\bchalau\b|\bchalo\b/g, 'chalao')
+         .replace(/\bbaja\s*de\b|\bbajao\s*na\b|\bbajau\b/g, 'bajao')
+         .replace(/\bsuna\s*de\b|\bsunao\s*na\b|\bsunau\b/g, 'sunao')
+         .replace(/\bgaana\b|\bgana\b|\bgeet\b/g, 'gaana')
+         .replace(/\baawaz\b|\bawaz\b|\bsound\b/g, 'volume');
+    return s;
   }
 
   startListeningSafely() {
@@ -690,8 +724,9 @@ class JarvisCore {
       return;
     }
 
-    const text = rawText.toLowerCase().trim();
-    const title = this.config.userTitle || 'Sir';
+    const normalized = this.normalizeUserInput(rawText);
+    const text = normalized || rawText.toLowerCase().trim();
+    const title = this.config.userTitle || 'Aditya';
     const isHindi = this.isHindiInput(text);
 
     window.audioFX.playProcessing();
@@ -782,6 +817,22 @@ class JarvisCore {
       const reply = isHindi
         ? `Ji bilkul ${title}, main aapko bilkul saaf aur spasht sun raha hoon! Sabhi audio link aur neural protocols 100 percent active hain. Kahiye ${title}, main aapke liye kya karoon?`
         : `Loud and clear, ${title}! Communication link is crystal clear and all Stark telemetry systems are operating at peak efficiency. How may I serve you?`;
+      this.speak(reply, null, isHindi);
+      return;
+    }
+
+    // 5B. YouTube Video Downloader Intent
+    const isDownloadIntent = text.includes('download') || text.includes('डाउनलोड') || text.includes('save video');
+    if (isDownloadIntent) {
+      let quality = '1080p';
+      if (text.includes('4k') || text.includes('2160')) quality = '4k';
+      else if (text.includes('720') || text.includes('hd')) quality = '720p';
+      else if (text.includes('audio') || text.includes('mp3') || text.includes('gana')) quality = 'mp3';
+
+      this.sendMacCommand('DOWNLOAD_YOUTUBE', { quality });
+      const reply = isHindi
+        ? `Ji bilkul ${title}, YouTube video ko ${quality} me download karna shuru kar diya hai. File Downloads folder me save ho rahi hai.`
+        : `Downloading active YouTube video in ${quality}, ${title}. The video will be saved directly to your Downloads folder.`;
       this.speak(reply, null, isHindi);
       return;
     }
@@ -1523,8 +1574,9 @@ class JarvisCore {
     );
   }
 
-  // Normalize phonetic speech for ultra-clear TTS output
+  // Normalize phonetic speech for ultra-clear TTS output (ChatGPT voice style)
   normalizeSpeechText(text) {
+    if (!text) return '';
     return text
       .replace(/°C/g, ' degrees Celsius')
       .replace(/km\/h/g, ' kilometers per hour')
@@ -1536,7 +1588,9 @@ class JarvisCore {
       .replace(/ram/gi, 'R A M')
       .replace(/os/gi, 'O S')
       .replace(/&/g, ' and ')
-      .replace(/[*_~`]/g, '')
+      .replace(/[*_~`#]/g, '')
+      .replace(/https?:\/\/\S+/g, '')
+      .replace(/\s+/g, ' ')
       .trim();
   }
 
@@ -1990,10 +2044,15 @@ class JarvisCore {
       };
     }
 
+    let lastMicTriggerTime = 0;
     const triggerMic = async (e) => {
       if (e) {
         try { e.preventDefault(); e.stopPropagation(); } catch (err) {}
       }
+      const now = Date.now();
+      if (now - lastMicTriggerTime < 500) return;
+      lastMicTriggerTime = now;
+
       window.audioFX.playWake();
       this.triggerHaptic([40]);
 

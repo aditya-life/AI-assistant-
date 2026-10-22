@@ -1,9 +1,25 @@
-// Service Worker for J.A.R.V.I.S. PWA
+// Service Worker for AADI / J.A.R.V.I.S. PWA
 // Network-First strategy ensures mobile always runs the latest code while providing offline fallback
 
-const CACHE_NAME = 'jarvis-pwa-v3.2.0';
+const CACHE_NAME = 'aadi-pwa-v3.3.0';
+
+const PRECACHE_ASSETS = [
+  '/',
+  '/index.html',
+  '/styles.css',
+  '/app.js',
+  '/audio-fx.js',
+  '/manifest.json'
+];
 
 self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(PRECACHE_ASSETS).catch((err) => {
+        console.warn('[AADI SW] Precache non-blocking error:', err);
+      });
+    })
+  );
   self.skipWaiting();
 });
 
@@ -13,7 +29,7 @@ self.addEventListener('activate', (event) => {
       return Promise.all(
         keys.map((key) => {
           if (key !== CACHE_NAME) {
-            console.log('[JARVIS SW] Purging old cache:', key);
+            console.log('[AADI SW] Purging old cache:', key);
             return caches.delete(key);
           }
         })

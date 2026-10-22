@@ -18,7 +18,7 @@ import ssl
 import psutil
 import qrcode
 from pathlib import Path
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -233,19 +233,469 @@ You MUST respond strictly in valid JSON with this exact structure:
         "reply": f"AI service se sampark nahi ho pa raha hai, {user_title}. Kripya apna internet ya API key check karein." if is_hindi else f"Unable to reach Gemini AI services at this moment, {user_title}."
     }
 
-# Local IP Address
+# =========================================================
+# AUTONOMOUS MULTI-TIER INTELLIGENCE & CHATGPT REASONING CORE
+# =========================================================
+
+def fetch_wikipedia_summary(query: str, is_hindi: bool = True) -> Optional[Dict[str, str]]:
+    """Zero-config Wikipedia REST API lookup with search and multi-script support."""
+    clean_q = re.sub(
+        r'\b(who is|what is|tell me about|explain|meaning of|kya hai|kaun hai|kaun the|ke baare me batao|ke bare me batao|kisko kehte hain|batao|kripya)\b',
+        '',
+        query,
+        flags=re.IGNORECASE
+    ).strip()
+    clean_q = re.sub(r'[\?।!.,]', '', clean_q).strip()
+    if not clean_q or len(clean_q) < 2:
+        clean_q = query.strip()
+
+    has_devanagari = any(0x0900 <= ord(c) <= 0x097F for c in clean_q)
+    langs_to_try = ["hi", "en"] if has_devanagari else ["en", "hi"]
+
+    for lang in langs_to_try:
+        try:
+            search_url = f"https://{lang}.wikipedia.org/w/api.php?action=query&list=search&srsearch={urllib.parse.quote(clean_q)}&format=json&utf8=1"
+            req1 = urllib.request.Request(search_url, headers={"User-Agent": "AADI-Assistant/3.0"})
+            with urllib.request.urlopen(req1, context=ctx, timeout=3.0) as resp1:
+                s_data = json.loads(resp1.read().decode("utf-8"))
+                search_res = s_data.get("query", {}).get("search", [])
+                if not search_res:
+                    continue
+                best_title = search_res[0]["title"]
+
+            sum_url = f"https://{lang}.wikipedia.org/api/rest_v1/page/summary/{urllib.parse.quote(best_title)}"
+            req2 = urllib.request.Request(sum_url, headers={"User-Agent": "AADI-Assistant/3.0"})
+            with urllib.request.urlopen(req2, context=ctx, timeout=3.0) as resp2:
+                sum_data = json.loads(resp2.read().decode("utf-8"))
+                extract = sum_data.get("extract")
+                if extract:
+                    clean_extract = re.sub(r'\s*\([^)]*\)', '', extract).strip()
+                    sentences = re.split(r'(?<=[.!?।])\s+', clean_extract)
+                    short_desc = ' '.join(sentences[:2]).strip()
+                    if short_desc:
+                        return {
+                            "title": best_title,
+                            "summary": short_desc,
+                            "lang": lang
+                        }
+        except Exception:
+            continue
+    return None
+
+def fetch_duckduckgo_answer(query: str) -> Optional[str]:
+    """DuckDuckGo Instant Answers API fallback."""
+    try:
+        clean_q = re.sub(r'\b(who is|what is|tell me about|batao)\b', '', query, flags=re.IGNORECASE).strip()
+        url = f"https://api.duckduckgo.com/?q={urllib.parse.quote(clean_q)}&format=json&no_html=1&skip_disambig=1"
+        req = urllib.request.Request(url, headers={"User-Agent": "AADI-Assistant/3.0"})
+        with urllib.request.urlopen(req, context=ctx, timeout=2.5) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+            answer = data.get("Answer") or data.get("AbstractText")
+            if answer:
+                clean_ans = re.sub(r'\s*\([^)]*\)', '', answer).strip()
+                sentences = re.split(r'(?<=[.!?])\s+', clean_ans)
+                return ' '.join(sentences[:2]).strip()
+    except Exception:
+        pass
+    return None
+
+def solve_spoken_math(query: str, is_hindi: bool = True, user_title: str = "Aditya") -> Optional[str]:
+    """Evaluates mathematical questions, percentages, roots, and arithmetic."""
+    q = query.lower()
+    calc_words = ["calculate", "solve", "plus", "minus", "into", "divided", "guna", "bhaag", "jodo", "ghatao", "percent", "%", "square root", "under root"]
+    if not any(w in q for w in calc_words) and not re.search(r'\d+\s*[\+\-\*\/]\s*\d+', q):
+        return None
+
+    pct_m1 = re.search(r'(\d+(?:\.\d+)?)\s*(?:ka|of)\s*(\d+(?:\.\d+)?)\s*(?:percent|%|pratishat)', q)
+    pct_m2 = re.search(r'(\d+(?:\.\d+)?)\s*(?:percent|%|pratishat)\s*(?:of|ka)?\s*(\d+(?:\.\d+)?)', q)
+    if pct_m1:
+        base, pct = float(pct_m1.group(1)), float(pct_m1.group(2))
+        res = (base * pct) / 100.0
+        val_str = f"{res:.2f}".rstrip('0').rstrip('.')
+        return f"{base:g} ka {pct:g} percent {val_str} hota hai, {user_title}." if is_hindi else f"{pct:g}% of {base:g} is {val_str}, {user_title}."
+    elif pct_m2:
+        pct, base = float(pct_m2.group(1)), float(pct_m2.group(2))
+        res = (base * pct) / 100.0
+        val_str = f"{res:.2f}".rstrip('0').rstrip('.')
+        return f"{base:g} ka {pct:g} percent {val_str} hota hai, {user_title}." if is_hindi else f"{pct:g}% of {base:g} is {val_str}, {user_title}."
+
+    sqrt_m = re.search(r'(?:square root|under root|root)\s*(?:of|ka)?\s*(\d+(?:\.\d+)?)', q)
+    if sqrt_m:
+        import math
+        val = float(sqrt_m.group(1))
+        res = math.sqrt(val)
+        val_str = f"{res:.2f}".rstrip('0').rstrip('.')
+        return f"{val:g} ka square root {val_str} hai, {user_title}." if is_hindi else f"The square root of {val:g} is {val_str}, {user_title}."
+
+    expr = re.sub(r'.*(?:calculate|batao|solve|kitna hota hai|kitna hoga)\s*', '', q)
+    expr = re.sub(r'plus|aur|jodo', '+', expr)
+    expr = re.sub(r'minus|ghatao|kam', '-', expr)
+    expr = re.sub(r'multiply by|multiplied by|into|guna|x', '*', expr)
+    expr = re.sub(r'divided by|divide by|bhaag', '/', expr)
+    expr = re.sub(r'[^0-9+\-*/(). ]', '', expr).strip()
+
+    if expr and re.match(r'^[0-9(]', expr):
+        try:
+            res = eval(expr, {"__builtins__": None}, {})
+            if isinstance(res, (int, float)):
+                val_str = f"{res:.2f}".rstrip('0').rstrip('.')
+                return f"Aapke hisaab ka parinaam {val_str} hai, {user_title}." if is_hindi else f"The calculated result is {val_str}, {user_title}."
+        except Exception:
+            pass
+    return None
+
+def solve_datetime_query(query: str, is_hindi: bool = True, user_title: str = "Aditya") -> Optional[str]:
+    """Accurate date, time, and day of week engine."""
+    q = query.lower()
+    time_words = ["time", "samay", "waqt", "kitne baje", "kya samay", "what time"]
+    date_words = ["date", "tarikh", "tareekh", "aaj ki date", "kon sa din", "kaun sa din", "which day", "today's date"]
+
+    now = time.localtime()
+    hour = now.tm_hour
+    minute = now.tm_min
+    am_pm = "AM" if hour < 12 else "PM"
+    h12 = hour % 12 or 12
+
+    days_hi = ["Somwar", "Mangalwar", "Budhwar", "Guruwar", "Shukrawar", "Shaniwar", "Raviwar"]
+    months_hi = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+
+    day_name_hi = days_hi[now.tm_wday]
+    day_name_en = time.strftime("%A", now)
+    date_str_hi = f"{now.tm_mday} {months_hi[now.tm_mon - 1]} {now.tm_year}"
+    date_str_en = time.strftime("%B %d, %Y", now)
+
+    is_time_ask = any(w in q for w in time_words)
+    is_date_ask = any(w in q for w in date_words)
+
+    if is_time_ask and is_date_ask:
+        return f"Abhi samay {h12} bajkar {minute:02d} minute ho rahe hain aur aaj {day_name_hi}, {date_str_hi} hai, {user_title}." if is_hindi else f"Current time is {h12}:{minute:02d} {am_pm} on {day_name_en}, {date_str_en}, {user_title}."
+    elif is_time_ask:
+        return f"Abhi samay {h12} bajkar {minute:02d} minute ({am_pm}) hai, {user_title}." if is_hindi else f"The time is currently {h12}:{minute:02d} {am_pm}, {user_title}."
+    elif is_date_ask:
+        return f"Aaj {day_name_hi} hai aur tarikh {date_str_hi} hai, {user_title}." if is_hindi else f"Today is {day_name_en}, {date_str_en}, {user_title}."
+
+    return None
+
+def solve_weather_query(query: str, is_hindi: bool = True, user_title: str = "Aditya") -> Optional[str]:
+    """Live weather queries via wttr.in telemetry."""
+    q = query.lower()
+    weather_words = ["weather", "mausam", "temperature", "taapmaan", "barish", "dhoop", "thand", "garmi"]
+    if not any(w in q for w in weather_words):
+        return None
+
+    w = get_live_weather()
+    temp = w.get("temp_C", "25")
+    desc = w.get("desc", "Clear")
+    city = w.get("city", "Delhi")
+    humidity = w.get("humidity", "45")
+
+    if is_hindi:
+        return f"Abhi {city} me mausam {desc.lower()} hai aur taapmaan {temp} degree Celsius hai, nami {humidity} percent hai, {user_title}."
+    else:
+        return f"Current weather in {city} is {desc} with a temperature of {temp}°C and {humidity}% humidity, {user_title}."
+
+def detect_computer_action(prompt: str) -> Optional[Dict[str, Any]]:
+    """Parses natural voice commands into Mac / Web system automations."""
+    p = prompt.lower().strip()
+
+    # YouTube Video Downloader Intent
+    if any(w in p for w in ["download", "डाउनलोड", "save video", "video download"]):
+        quality = "1080p"
+        if "4k" in p or "2160" in p: quality = "4k"
+        elif "720" in p: quality = "720p"
+        elif "mp3" in p or "audio" in p: quality = "mp3"
+        return {
+            "action": "DOWNLOAD_YOUTUBE",
+            "params": {"quality": quality},
+            "reply_hi": f"Ji bilkul, YouTube video ko {quality} me download karna shuru kar diya hai. File Downloads folder me save ho rahi hai.",
+            "reply_en": f"Starting YouTube video download in {quality}. The file will be saved directly to your Downloads folder."
+        }
+
+    # YouTube Song / Video Play
+    if any(w in p for w in ["gana chalao", "gaana chalao", "song chalao", "play song", "music chalao", "youtube pe chalao", "bajao", "sunao"]):
+        q = re.sub(r'.*(?:gana|gaana|song|music|youtube)\s*(?:par|pe|on|me)?\s*', '', p)
+        q = re.sub(r'\b(chalao|bajao|sunao|play|karo|laga do)\b', '', q).strip()
+        if not q: q = "trending music"
+        return {
+            "action": "PLAY_YOUTUBE",
+            "params": {"query": q},
+            "reply_hi": f"Ji bilkul, YouTube par '{q}' play kar diya hai.",
+            "reply_en": f"Playing '{q}' on YouTube right away."
+        }
+
+    # Launch Applications
+    if any(w in p for w in ["open", "kholo", "launch", "chalu karo"]):
+        if "chrome" in p:
+            return {"action": "OPEN_APP", "params": {"appName": "Google Chrome"}, "reply_hi": "Google Chrome open kar diya hai.", "reply_en": "Opening Google Chrome."}
+        elif "vs code" in p or "code editor" in p:
+            return {"action": "OPEN_APP", "params": {"appName": "Visual Studio Code"}, "reply_hi": "Visual Studio Code workspace open kar diya hai.", "reply_en": "Opening Visual Studio Code workspace."}
+        elif "terminal" in p:
+            return {"action": "OPEN_APP", "params": {"appName": "Terminal"}, "reply_hi": "Terminal launch kar diya hai.", "reply_en": "Launching Terminal."}
+        elif "calculator" in p:
+            return {"action": "OPEN_APP", "params": {"appName": "Calculator"}, "reply_hi": "Calculator open kar diya hai.", "reply_en": "Opening Calculator."}
+        elif "safari" in p:
+            return {"action": "OPEN_APP", "params": {"appName": "Safari"}, "reply_hi": "Safari browser open kar diya hai.", "reply_en": "Opening Safari."}
+
+    # Volume & Mute Controls
+    if "unmute" in p:
+        return {"action": "UNMUTE_VOLUME", "params": {}, "reply_hi": "Volume unmute kar diya hai.", "reply_en": "Master audio unmuted."}
+    if "mute" in p or "chup" in p or "shant" in p:
+        return {"action": "MUTE_VOLUME", "params": {}, "reply_hi": "Volume mute kar diya hai.", "reply_en": "Master audio muted."}
+    if any(w in p for w in ["volume badhao", "awaz badhao", "sound badhao", "tez karo"]):
+        return {"action": "VOLUME_UP", "params": {"delta": 15}, "reply_hi": "Volume badha diya hai.", "reply_en": "Volume increased."}
+    if any(w in p for w in ["volume kam karo", "awaz kam karo", "sound kam karo", "dheere karo"]):
+        return {"action": "VOLUME_DOWN", "params": {"delta": -15}, "reply_hi": "Volume kam kar diya hai.", "reply_en": "Volume decreased."}
+
+    # Screenshot & Workstation Lock
+    if "screenshot" in p or "photo lo" in p:
+        return {"action": "TAKE_SCREENSHOT", "params": {}, "reply_hi": "Screen capture kar liya hai. Screenshot Desktop par save hai.", "reply_en": "Screenshot captured and saved to Desktop."}
+    if "lock" in p or "so jao" in p or "sleep" in p:
+        return {"action": "LOCK_SCREEN", "params": {}, "reply_hi": "Screen lock kar di hai.", "reply_en": "Workstation locked."}
+
+    # Media Playback Controls
+    if "skip ad" in p or "ad hatao" in p or "ad skip" in p:
+        return {"action": "SKIP_AD", "params": {}, "reply_hi": "YouTube ad skip kar diya hai.", "reply_en": "Skipped YouTube advertisement."}
+    if any(w in p for w in ["pause", "gana roko", "video roko"]):
+        return {"action": "MEDIA_PAUSE", "params": {}, "reply_hi": "Playback pause kar diya hai.", "reply_en": "Playback paused."}
+    if any(w in p for w in ["resume", "unpause", "dobara chalao"]):
+        return {"action": "MEDIA_RESUME", "params": {}, "reply_hi": "Playback resume kar diya hai.", "reply_en": "Playback resumed."}
+    if any(w in p for w in ["next track", "agla gana", "agla video"]):
+        return {"action": "MEDIA_NEXT", "params": {}, "reply_hi": "Agla gaana play kar diya hai.", "reply_en": "Playing next track."}
+
+    return None
+
+def generate_chatgpt_conversational_response(prompt: str, is_hindi: bool = True, user_title: str = "Aditya", assistant_name: str = "AADI") -> str:
+    """Warm, witty, natural ChatGPT Voice persona for conversational dialogue."""
+    p = prompt.lower().strip()
+
+    if any(w in p for w in ["kaise ho", "kya haal", "how are you", "sab theek", "how do you do"]):
+        return f"Main bilkul badhiya aur poori tarah energetic hoon, {user_title}! Aap bataiye, aaj aapka din kaisa chal raha hai?" if is_hindi else f"I'm feeling great and ready to roll, {user_title}! How are things going with you today?"
+
+    if any(w in p for w in ["sun rahe ho", "sun sakte ho", "can you hear me", "online ho", "active ho", "hear me"]):
+        return f"Haan bilkul {user_title}, main aapko crystal clear sun raha hoon! Kahiye main aapki kya madad karoon?" if is_hindi else f"Loud and clear, {user_title}! I'm right here. How can I help you right now?"
+
+    if any(w in p for w in ["tum kaun ho", "aap kaun ho", "who are you", "naam kya hai", "what is your name"]):
+        return f"Mera naam {assistant_name} hai, {user_title}. Main aapka personal AI assistant hoon, jo aapki baatein sunta hai, sawaalon ke jawaab deta hai aur aapke Mac ko control karta hai." if is_hindi else f"I am {assistant_name}, your personal AI assistant. I'm here to converse with you, answer questions, and control your workstation effortlessly."
+
+    if any(w in p for w in ["kisne banaya", "who created you", "who made you"]):
+        return f"Mujhe {user_title} ne banaya aur calibrate kiya hai, ek ultra-intelligent personal voice companion ke roop me!" if is_hindi else f"I was engineered and fine-tuned by {user_title} to serve as an ultra-fast, intelligent personal voice assistant."
+
+    if any(w in p for w in ["joke", "chutkula", "hasao", "funny"]):
+        jokes_hi = [
+            f"Ek programmer se pucha gaya: 'Duniya me 10 tarah ke log kaun se hote hain?' Usne kaha: 'Jo binary samajhte hain aur jo nahi samajhte!' haha, thoda nerd joke tha, {user_title}!",
+            f"Computer doctor ke paas gaya aur bola: 'Doctor sahab, mujhe lagta hai mujhe virus ho gaya hai!' Doctor ne bola: 'Reboot karo aur so jao!' kaisa laga, {user_title}?"
+        ]
+        jokes_en = [
+            f"Why do programmers prefer dark mode? Because light attracts bugs! Always classic, {user_title}.",
+            f"There are only 10 types of people in the world: those who understand binary, and those who don't!"
+        ]
+        return random.choice(jokes_hi if is_hindi else jokes_en)
+
+    if any(w in p for w in ["motivation", "motivate", "quote", "himmat"]):
+        quotes_hi = [
+            f"Yaad rakhiye {user_title}, safalta ki shuruat hamesha ek chote se kadam se hoti hai. Aap jo kar rahe hain, usme apna best dijiye!",
+            f"{user_title}, mushkilein kewal behtar banne ka rasta hoti hain. Bas focus banaye rakhiye, manzil zaroor milegi!"
+        ]
+        quotes_en = [
+            f"Remember {user_title}, the best way to predict the future is to create it. Keep pushing boundaries!",
+            f"Stay persistent and relentless, {user_title}. Great things take focus and determination."
+        ]
+        return random.choice(quotes_hi if is_hindi else quotes_en)
+
+    if any(w in p for w in ["shukriya", "dhanyawad", "thank you", "thanks"]):
+        return f"Arey koi baat nahi {user_title}, ye to mera farz hai! Hamesha aapki seva me hazir hoon." if is_hindi else f"You're very welcome, {user_title}! Always happy to help."
+
+    if any(w in p for w in ["alvida", "bye", "good night", "shubh ratri", "tata"]):
+        return f"Shubh ratri aur apna khayal rakhiye, {user_title}! Milte hain agle session me." if is_hindi else f"Take care and have a wonderful time, {user_title}! Talk to you soon."
+
+    defaults_hi = [
+        f"Maine aapki baat dhyan se suni hai, {user_title}. Is vishay me main aapki aur kya madad kar sakta hoon?",
+        f"Aapka kehna bilkul rochak hai, {user_title}. Kahiye main is par aur search karoon ya koi task perform karoon?",
+        f"Ji bilkul {user_title}, main poori tarah taiyaar hoon. Kahiye aage kya karna hai?"
+    ]
+    defaults_en = [
+        f"Understood, {user_title}. How would you like me to proceed with this?",
+        f"That's interesting, {user_title}. Would you like me to search deeper or execute a related command for you?",
+        f"I'm all ears, {user_title}. What shall we tackle next?"
+    ]
+    return random.choice(defaults_hi if is_hindi else defaults_en)
+
+def save_auto_distillation(query: str, reply_hi: str, reply_en: str, is_hindi: bool):
+    """Saves autonomous knowledge responses into offline memory for 0ms recall."""
+    if not config.get("autoTrain", True):
+        return
+    try:
+        data = load_learned_intents()
+        q_norm = query.lower().strip()
+        for it in data.get("intents", []):
+            if it.get("query") == q_norm:
+                it["hitCount"] = it.get("hitCount", 1) + 1
+                save_learned_intents(data)
+                return
+
+        new_id = f"learned_{int(time.time())}_{random.randint(100, 999)}"
+        words = [w for w in re.findall(r'\w+', q_norm) if len(w) > 2]
+        new_intent = {
+            "id": new_id,
+            "query": q_norm,
+            "keywords": words[:6],
+            "reply_en": reply_en,
+            "reply_hi": reply_hi,
+            "action": None,
+            "actionParams": {},
+            "hitCount": 1,
+            "learnedAt": int(time.time())
+        }
+        data["intents"].insert(0, new_intent)
+        save_learned_intents(data)
+    except Exception as e:
+        print(f"[AADI AUTO-DISTILLATION ERROR] {e}")
+
+def is_conversational_query(prompt: str) -> bool:
+    p = prompt.lower().strip()
+    conv_triggers = [
+        "kaise ho", "kya haal", "how are you", "sab theek", "how do you do",
+        "sun rahe ho", "sun sakte ho", "can you hear me", "online ho", "active ho", "hear me",
+        "tum kaun ho", "aap kaun ho", "who are you", "naam kya hai", "what is your name",
+        "kisne banaya", "who created you", "who made you",
+        "joke", "chutkula", "hasao", "funny",
+        "motivation", "motivate", "quote", "himmat",
+        "shukriya", "dhanyawad", "thank you", "thanks",
+        "alvida", "bye", "good night", "shubh ratri", "tata", "good morning", "shubh prabhat", "hello aadi", "hi aadi", "hey aadi"
+    ]
+    return any(w in p for w in conv_triggers)
+
+def query_aadi_intelligence(prompt: str, is_hindi: bool = True, user_title: str = "Aditya", assistant_name: str = "AADI", api_key: str = "") -> Dict[str, Any]:
+    """Unified ChatGPT-grade conversational & autonomous intelligence pipeline."""
+    key = api_key or config.get("geminiApiKey") or os.environ.get("GEMINI_API_KEY", "")
+
+    # 1. Computer & Mac Automations
+    action_match = detect_computer_action(prompt)
+    if action_match:
+        reply_hi = action_match.get("reply_hi", f"Ji {user_title}, command execute kar diya hai.")
+        reply_en = action_match.get("reply_en", f"Command executed successfully, {user_title}.")
+        reply = reply_hi if is_hindi else reply_en
+        return {
+            "success": True,
+            "model": "aadi-action-engine",
+            "reply": reply,
+            "action": action_match.get("action"),
+            "actionParams": action_match.get("params", {}),
+            "autoTrained": False
+        }
+
+    # 2. Math & Spoken Calculations
+    math_reply = solve_spoken_math(prompt, is_hindi=is_hindi, user_title=user_title)
+    if math_reply:
+        return {
+            "success": True,
+            "model": "aadi-math-engine",
+            "reply": math_reply,
+            "autoTrained": False
+        }
+
+    # 3. Live Weather Telemetry
+    weather_reply = solve_weather_query(prompt, is_hindi=is_hindi, user_title=user_title)
+    if weather_reply:
+        return {
+            "success": True,
+            "model": "aadi-weather-engine",
+            "reply": weather_reply,
+            "autoTrained": False
+        }
+
+    # 4. Chronos Date & Time Engine
+    dt_reply = solve_datetime_query(prompt, is_hindi=is_hindi, user_title=user_title)
+    if dt_reply:
+        return {
+            "success": True,
+            "model": "aadi-chronos-engine",
+            "reply": dt_reply,
+            "autoTrained": False
+        }
+
+    # 5. Direct Conversational Dialogue Check (ChatGPT Voice Persona)
+    if is_conversational_query(prompt):
+        conv_reply = generate_chatgpt_conversational_response(prompt, is_hindi=is_hindi, user_title=user_title, assistant_name=assistant_name)
+        return {
+            "success": True,
+            "model": "aadi-dialogue-engine",
+            "reply": conv_reply,
+            "autoTrained": False
+        }
+
+    # 6. Cloud Gemini Generative AI (when key configured)
+    if key:
+        gemini_res = query_gemini_ai(prompt=prompt, is_hindi=is_hindi, user_title=user_title, assistant_name=assistant_name, api_key=key)
+        if gemini_res.get("success"):
+            return gemini_res
+
+    # 7. Autonomous Wikipedia Knowledge Retrieval
+    wiki_info = fetch_wikipedia_summary(prompt, is_hindi=is_hindi)
+    if wiki_info and wiki_info.get("summary"):
+        summary = wiki_info["summary"]
+        title = wiki_info["title"]
+        if is_hindi:
+            if wiki_info.get("lang") == "hi":
+                reply = f"Ji {user_title}, {summary}"
+            else:
+                reply = f"Ji {user_title}, {title} ke baare me: {summary}"
+        else:
+            reply = f"According to knowledge records, {summary}"
+
+        save_auto_distillation(prompt, reply, reply, is_hindi)
+        return {
+            "success": True,
+            "model": "aadi-wiki-engine",
+            "reply": reply,
+            "autoTrained": True
+        }
+
+    # 8. DuckDuckGo Instant Answer
+    ddg_ans = fetch_duckduckgo_answer(prompt)
+    if ddg_ans:
+        reply = f"Ji {user_title}, {ddg_ans}" if is_hindi else f"{ddg_ans}, {user_title}."
+        save_auto_distillation(prompt, reply, reply, is_hindi)
+        return {
+            "success": True,
+            "model": "aadi-ddg-engine",
+            "reply": reply,
+            "autoTrained": True
+        }
+
+    # 9. Natural Dialogue Fallback (ChatGPT Voice Persona)
+    conv_reply = generate_chatgpt_conversational_response(prompt, is_hindi=is_hindi, user_title=user_title, assistant_name=assistant_name)
+    return {
+        "success": True,
+        "model": "aadi-dialogue-engine",
+        "reply": conv_reply,
+        "autoTrained": False
+    }
+
+# Local IP Address (Cached)
+_local_ip_cache = ""
+
 def get_local_ip() -> str:
+    global _local_ip_cache
+    if _local_ip_cache:
+        return _local_ip_cache
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.connect(("8.8.8.8", 80))
         ip = s.getsockname()[0]
         s.close()
+        _local_ip_cache = ip
         return ip
     except Exception:
         return "127.0.0.1"
 
-# Generate QR Code as Base64 Data URL
+# Generate QR Code as Base64 Data URL (Cached for Instant Response)
+_qr_cache = {}
+
 def generate_qr_code(url: str) -> str:
+    global _qr_cache
+    if url in _qr_cache:
+        return _qr_cache[url]
     qr = qrcode.QRCode(
         version=1,
         error_correction=qrcode.constants.ERROR_CORRECT_L,
@@ -258,7 +708,9 @@ def generate_qr_code(url: str) -> str:
     buffered = io.BytesIO()
     img.save(buffered, format="PNG")
     img_str = base64.b64encode(buffered.getvalue()).decode()
-    return f"data:image/png;base64,{img_str}"
+    res = f"data:image/png;base64,{img_str}"
+    _qr_cache[url] = res
+    return res
 
 # YouTube Video Auto-Play Resolver
 def resolve_youtube_first_video(query: str) -> Dict[str, Any]:
@@ -779,8 +1231,42 @@ def execute_mac_command(action: str, params: Dict[str, Any] = {}) -> Dict[str, A
             return {"success": True, "text": stdout.decode("utf-8", errors="ignore")}
 
         elif action == "DOWNLOAD_YOUTUBE":
-            yt_url = params.get("url", "")
+            yt_url = params.get("url", "").strip()
             quality = str(params.get("quality", "1080p")).lower()
+            if not yt_url:
+                get_yt_script = """
+                try
+                    tell application "Google Chrome"
+                        repeat with w in windows
+                            repeat with t in tabs of w
+                                if URL of t contains "youtube.com/watch" then
+                                    return URL of t
+                                end if
+                            end repeat
+                        end repeat
+                    end tell
+                end try
+                try
+                    tell application "Safari"
+                        repeat with w in windows
+                            repeat with t in tabs of w
+                                if URL of t contains "youtube.com/watch" then
+                                    return URL of t
+                                end if
+                            end repeat
+                        end repeat
+                    end tell
+                end try
+                return ""
+                """
+                try:
+                    s_res = subprocess.run(["osascript", "-e", get_yt_script], capture_output=True, text=True, timeout=2.0)
+                    active_u = s_res.stdout.strip()
+                    if active_u:
+                        yt_url = active_u
+                except Exception:
+                    pass
+
             if yt_url:
                 import threading
                 def _bg_download(target_url: str, res_choice: str):
@@ -838,8 +1324,16 @@ def execute_mac_command(action: str, params: Dict[str, Any] = {}) -> Dict[str, A
     except Exception as e:
         return {"success": False, "error": str(e)}
 
-# System Telemetry via psutil & macOS pmset
+# System Telemetry via psutil & macOS pmset (1.0s fast cache for low latency)
+_last_stats_time = 0.0
+_last_stats_cache = {}
+
 def get_system_stats() -> Dict[str, Any]:
+    global _last_stats_time, _last_stats_cache
+    now = time.time()
+    if now - _last_stats_time < 1.0 and _last_stats_cache:
+        return _last_stats_cache
+
     total_mem = psutil.virtual_memory().total
     used_mem = psutil.virtual_memory().used
     mem_usage = psutil.virtual_memory().percent
@@ -857,7 +1351,7 @@ def get_system_stats() -> Dict[str, Any]:
     except Exception:
         pass
 
-    return {
+    res = {
         "cpuModel": "Apple Silicon / Intel Core",
         "cpuCount": cpu_count,
         "cpuUsage": cpu_usage,
@@ -870,41 +1364,44 @@ def get_system_stats() -> Dict[str, Any]:
         "platform": sys.platform,
         "hostname": socket.gethostname()
     }
+    _last_stats_cache = res
+    _last_stats_time = now
+    return res
 
-# Live Weather Fetcher with In-Memory 10-Min Cache
+# Live Weather Fetcher with Non-Blocking Background Refresh
 cached_weather = {
     "city": "Delhi",
-    "temp_C": "28",
+    "temp_C": "26",
     "desc": "Clear Skies & Mild Breeze",
     "humidity": "45",
     "windspeedKmph": "12",
-    "timestamp": 0
+    "timestamp": time.time()
 }
 
 def get_live_weather(city: str = "Delhi") -> Dict[str, Any]:
     global cached_weather
     now = time.time()
-    if now - cached_weather.get("timestamp", 0) < 600:
-        return cached_weather
-
-    try:
-        url = f"https://wttr.in/{urllib.parse.quote(city)}?format=j1"
-        req = urllib.request.Request(url, headers={"User-Agent": "curl/7.68.0"})
-        with urllib.request.urlopen(req, timeout=1.5) as resp:
-            data = json.loads(resp.read().decode())
-            current = data["current_condition"][0]
-            cached_weather = {
-                "city": city,
-                "temp_C": current["temp_C"],
-                "desc": current["weatherDesc"][0]["value"],
-                "humidity": current["humidity"],
-                "windspeedKmph": current["windspeedKmph"],
-                "timestamp": now
-            }
-            return cached_weather
-    except Exception:
-        cached_weather["timestamp"] = now
-        return cached_weather
+    if now - cached_weather.get("timestamp", 0) > 600:
+        def _bg_fetch():
+            global cached_weather
+            try:
+                url = f"https://wttr.in/{urllib.parse.quote(city)}?format=j1"
+                req = urllib.request.Request(url, headers={"User-Agent": "curl/7.68.0"})
+                with urllib.request.urlopen(req, timeout=2.0) as resp:
+                    data = json.loads(resp.read().decode())
+                    current = data["current_condition"][0]
+                    cached_weather = {
+                        "city": city,
+                        "temp_C": current["temp_C"],
+                        "desc": current["weatherDesc"][0]["value"],
+                        "humidity": current["humidity"],
+                        "windspeedKmph": current["windspeedKmph"],
+                        "timestamp": time.time()
+                    }
+            except Exception:
+                cached_weather["timestamp"] = time.time()
+        threading.Thread(target=_bg_fetch, daemon=True).start()
+    return cached_weather
 
 # Active WebSocket Connections Manager
 class ConnectionManager:
@@ -1089,7 +1586,8 @@ async def speech_intent(request: Request):
 def process_voice_audio_with_gemini(audio_bytes: bytes, mime_type: str = "audio/webm") -> Dict[str, Any]:
     key = config.get("geminiApiKey", "")
     if not key:
-        return {"success": False, "error": "gemini_key_missing", "reply": "Sir, Gemini API Key configure nahi hai."}
+        user_title = config.get("userTitle", "Aditya")
+        return {"success": False, "error": "gemini_key_missing", "reply": f"Ji {user_title}, main sun raha hoon. Kahiye kya karna hai?"}
     
     b64_audio = base64.b64encode(audio_bytes).decode("utf-8")
     
@@ -1232,18 +1730,18 @@ async def ai_query_endpoint(request: Request):
     if not prompt:
         return {"success": False, "error": "Empty prompt"}
 
-    user_title = config.get("userTitle", "Sir")
-    assistant_name = config.get("assistantName", "J.A.R.V.I.S.")
+    user_title = config.get("userTitle", "Aditya")
+    assistant_name = config.get("assistantName", "AADI")
     
-    # Query Gemini
-    result = query_gemini_ai(
+    # Query AADI Autonomous Multi-Tier Intelligence Core
+    result = query_aadi_intelligence(
         prompt=prompt,
         is_hindi=is_hindi,
         user_title=user_title,
         assistant_name=assistant_name
     )
 
-    # If Gemini requested a Mac action, execute it
+    # If an action was identified, execute it on Mac
     action = result.get("action")
     action_params = result.get("actionParams", {})
     if action and config.get("macControlsEnabled", True):
@@ -1259,7 +1757,7 @@ async def ai_query_endpoint(request: Request):
         "payload": {
             "role": "jarvis",
             "text": result.get("reply", ""),
-            "source": "gemini-ai",
+            "source": result.get("model", "aadi-intelligence"),
             "originClientId": origin_client,
             "sourceDevice": source_device
         }

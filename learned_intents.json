@@ -1,7 +1,194 @@
 {
   "version": "1.0.0",
-  "lastUpdated": 1786906691,
+  "lastUpdated": 1792702477,
   "intents": [
+    {
+      "id": "learned_test_1792702440",
+      "query": "tony stark ka armor kisne banaya",
+      "keywords": [
+        "tony",
+        "stark",
+        "armor",
+        "kisne",
+        "banaya"
+      ],
+      "reply_en": "Tony Stark designed and engineered all Mark series armors himself.",
+      "reply_hi": "Tony Stark ne apne sabhi Mark series armors khud design aur engineer kiye hain.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1792702440
+    },
+    {
+      "id": "test_qa_skill",
+      "query": "superconductor kya hai",
+      "keywords": [
+        "superconductor",
+        "kya",
+        "hai",
+        "what",
+        "is"
+      ],
+      "reply_en": "A superconductor conducts electricity with zero resistance at low temperatures.",
+      "reply_hi": "Superconductor ek aisi samagri hai jo bina kisi rukawat ke vidyut pravahit karti hai.",
+      "action": null,
+      "hitCount": 1
+    },
+    {
+      "id": "learned_1792702179_810",
+      "query": "tell me a joke",
+      "keywords": [
+        "tell",
+        "joke"
+      ],
+      "reply_en": "According to knowledge records, I Didn't Mean to Haunt You is the third studio album by the American musician Quadeca, released on November 10, 2022, through DeadAir Records and AWAL. Following his second album From Me to You in 2021, Quadeca came up with the concept for I Didn't Mean to Haunt You and contacted DeadAir, offering them to release his new album.",
+      "reply_hi": "According to knowledge records, I Didn't Mean to Haunt You is the third studio album by the American musician Quadeca, released on November 10, 2022, through DeadAir Records and AWAL. Following his second album From Me to You in 2021, Quadeca came up with the concept for I Didn't Mean to Haunt You and contacted DeadAir, offering them to release his new album.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1792702179
+    },
+    {
+      "id": "learned_1792702177_593",
+      "query": "kaise ho aadi",
+      "keywords": [
+        "kaise",
+        "aadi"
+      ],
+      "reply_en": "Ji Aditya, List of Hindi songs recorded by Asha Bhosle ke baare me: Asha Bhosle was an Indian playback singer who has been cited by the Guinness Book of World Records as the most recorded singer in history.",
+      "reply_hi": "Ji Aditya, List of Hindi songs recorded by Asha Bhosle ke baare me: Asha Bhosle was an Indian playback singer who has been cited by the Guinness Book of World Records as the most recorded singer in history.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1792702177
+    },
+    {
+      "id": "learned_1792702175_831",
+      "query": "what is quantum computing",
+      "keywords": [
+        "what",
+        "quantum",
+        "computing"
+      ],
+      "reply_en": "According to knowledge records, A quantum computer is a computer that represents and processes information using quantum states. Quantum computations exploit phenomena such as superposition, interference, and entanglement.",
+      "reply_hi": "According to knowledge records, A quantum computer is a computer that represents and processes information using quantum states. Quantum computations exploit phenomena such as superposition, interference, and entanglement.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 3,
+      "learnedAt": 1792702175
+    },
+    {
+      "id": "learned_1792702174_424",
+      "query": "virat kohli kaun hai",
+      "keywords": [
+        "virat",
+        "kohli",
+        "kaun",
+        "hai"
+      ],
+      "reply_en": "Ji Aditya, Virat Kohli ke baare me: Virat Kohli is an Indian international cricketer and former all-format captain of the Indian national cricket team. He is a right-handed batter and an occasional right-arm medium-pace bowler.",
+      "reply_hi": "Ji Aditya, Virat Kohli ke baare me: Virat Kohli is an Indian international cricketer and former all-format captain of the Indian national cricket team. He is a right-handed batter and an occasional right-arm medium-pace bowler.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 3,
+      "learnedAt": 1792702174
+    },
+    {
+      "id": "learned_test_1792702048",
+      "query": "tony stark ka armor kisne banaya",
+      "keywords": [
+        "tony",
+        "stark",
+        "armor",
+        "kisne",
+        "banaya"
+      ],
+      "reply_en": "Tony Stark designed and engineered all Mark series armors himself.",
+      "reply_hi": "Tony Stark ne apne sabhi Mark series armors khud design aur engineer kiye hain.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1792702048
+    },
+    {
+      "id": "test_qa_skill",
+      "query": "superconductor kya hai",
+      "keywords": [
+        "superconductor",
+        "kya",
+        "hai",
+        "what",
+        "is"
+      ],
+      "reply_en": "A superconductor conducts electricity with zero resistance at low temperatures.",
+      "reply_hi": "Superconductor ek aisi samagri hai jo bina kisi rukawat ke vidyut pravahit karti hai.",
+      "action": null,
+      "hitCount": 1
+    },
+    {
+      "id": "learned_test_1792702032",
+      "query": "tony stark ka armor kisne banaya",
+      "keywords": [
+        "tony",
+        "stark",
+        "armor",
+        "kisne",
+        "banaya"
+      ],
+      "reply_en": "Tony Stark designed and engineered all Mark series armors himself.",
+      "reply_hi": "Tony Stark ne apne sabhi Mark series armors khud design aur engineer kiye hain.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1792702032
+    },
+    {
+      "id": "test_qa_skill",
+      "query": "superconductor kya hai",
+      "keywords": [
+        "superconductor",
+        "kya",
+        "hai",
+        "what",
+        "is"
+      ],
+      "reply_en": "A superconductor conducts electricity with zero resistance at low temperatures.",
+      "reply_hi": "Superconductor ek aisi samagri hai jo bina kisi rukawat ke vidyut pravahit karti hai.",
+      "action": null,
+      "hitCount": 1
+    },
+    {
+      "id": "learned_test_1792701799",
+      "query": "tony stark ka armor kisne banaya",
+      "keywords": [
+        "tony",
+        "stark",
+        "armor",
+        "kisne",
+        "banaya"
+      ],
+      "reply_en": "Tony Stark designed and engineered all Mark series armors himself.",
+      "reply_hi": "Tony Stark ne apne sabhi Mark series armors khud design aur engineer kiye hain.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1792701799
+    },
+    {
+      "id": "test_qa_skill",
+      "query": "superconductor kya hai",
+      "keywords": [
+        "superconductor",
+        "kya",
+        "hai",
+        "what",
+        "is"
+      ],
+      "reply_en": "A superconductor conducts electricity with zero resistance at low temperatures.",
+      "reply_hi": "Superconductor ek aisi samagri hai jo bina kisi rukawat ke vidyut pravahit karti hai.",
+      "action": null,
+      "hitCount": 1
+    },
     {
       "id": "learned_1786906691_691",
       "query": "हिम्मत मोहे ऐसी लागी",
