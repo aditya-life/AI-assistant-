@@ -1268,14 +1268,29 @@ def execute_mac_command(action: str, params: Dict[str, Any] = {}) -> Dict[str, A
                     pass
 
             if yt_url:
+                if not hasattr(execute_mac_command, "_active_downloads"):
+                    execute_mac_command._active_downloads = set()
+
+                # Concurrency lock: prevent duplicate downloads of same video
+                if yt_url in execute_mac_command._active_downloads:
+                    print(f"[AADI DOWNLOAD] Already in progress for {yt_url}")
+                    return {"success": True, "action": "DOWNLOAD_YOUTUBE", "url": yt_url, "quality": quality, "status": "already_in_progress"}
+
+                execute_mac_command._active_downloads.add(yt_url)
+
                 import threading
                 def _bg_download(target_url: str, res_choice: str):
-                    yt_dlp_bin = "/Users/aditya/.local/bin/yt-dlp" if os.path.exists("/Users/aditya/.local/bin/yt-dlp") else "yt-dlp"
-                    downloads_dir = os.path.expanduser("~/Downloads")
-                    print(f"[AADI DOWNLOAD] Starting background download: {target_url} ({res_choice})")
                     try:
+                        downloads_dir = os.path.expanduser("~/Downloads")
+                        # Use current Python runtime with -m yt_dlp to avoid standalone PyInstaller Gatekeeper verification
+                        py_bin = sys.executable or "python3"
+                        # Fallback order: venv python -m yt_dlp, then which yt-dlp
+                        dl_runner = f'"{py_bin}" -m yt_dlp'
+                        
+                        print(f"[AADI DOWNLOAD] Starting native download: {target_url} ({res_choice})")
+
                         if res_choice in ("mp3", "audio"):
-                            dl_cmd = f'"{yt_dlp_bin}" --no-playlist -x --audio-format mp3 -o "{downloads_dir}/%(title)s.%(ext)s" "{target_url}"'
+                            dl_cmd = f'{dl_runner} --no-playlist -x --audio-format mp3 -o "{downloads_dir}/%(title)s.%(ext)s" "{target_url}"'
                             subprocess.run(dl_cmd, shell=True)
                             print(f"[AADI DOWNLOAD] Finished MP3 download to ~/Downloads")
                             subprocess.run(["osascript", "-e", 'display notification "YouTube Audio downloaded to ~/Downloads" with title "AADI Downloader"'])
@@ -1294,12 +1309,15 @@ def execute_mac_command(action: str, params: Dict[str, Any] = {}) -> Dict[str, A
                             max_h = 480
 
                         fmt = f"bestvideo[height<={max_h}]+bestaudio/best[height<={max_h}]/best"
-                        dl_cmd = f'"{yt_dlp_bin}" --no-playlist -f "{fmt}" --merge-output-format mp4 -o "{downloads_dir}/%(title)s_{res_choice}.%(ext)s" "{target_url}"'
+                        dl_cmd = f'{dl_runner} --no-playlist -f "{fmt}" --merge-output-format mp4 -o "{downloads_dir}/%(title)s_{res_choice}.%(ext)s" "{target_url}"'
                         subprocess.run(dl_cmd, shell=True)
                         print(f"[AADI DOWNLOAD] Finished {res_choice} video download to ~/Downloads")
                         subprocess.run(["osascript", "-e", f'display notification "Video downloaded in {res_choice} to ~/Downloads" with title "AADI Downloader"'])
                     except Exception as err:
                         print(f"[AADI DOWNLOAD ERROR] {err}")
+                    finally:
+                        if hasattr(execute_mac_command, "_active_downloads") and target_url in execute_mac_command._active_downloads:
+                            execute_mac_command._active_downloads.remove(target_url)
 
                 thread = threading.Thread(target=_bg_download, args=(yt_url, quality), daemon=True)
                 thread.start()

@@ -536,7 +536,15 @@
   // =========================================================
   // 4. SMART VIDEO DOWNLOADER (AADI Native yt-dlp + Standalone Fallback)
   // =========================================================
+  let isDownloadTriggering = false;
   function triggerVideoDownload(quality) {
+    if (isDownloadTriggering) {
+      showHUDToast(`AADI: Download already in progress...`);
+      return false;
+    }
+    isDownloadTriggering = true;
+    setTimeout(() => { isDownloadTriggering = false; }, 3500);
+
     const videoUrl = window.location.href;
     const targetQ = quality || '1080p';
 
