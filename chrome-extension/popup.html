@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>J.A.R.V.I.S. YouTube Sentinel</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="hud-container">
+    <!-- Header -->
+    <header class="hud-header">
+      <div class="reactor-wrap">
+        <div class="arc-reactor"></div>
+      </div>
+      <div class="title-wrap">
+        <h1 class="hud-title">J.A.R.V.I.S. SENTINEL</h1>
+        <span class="hud-subtitle">YouTube Defense & Quality Core v2.0</span>
+      </div>
+      <div id="wsStatusBadge" class="status-badge offline" title="Stark Mainframe WebSocket Connection">
+        <span class="status-dot"></span>
+        <span class="status-text">OFFLINE</span>
+      </div>
+    </header>
+
+    <!-- Active Tab Status -->
+    <section class="card active-tab-card">
+      <div class="card-header">
+        <span class="card-label">CURRENT VIDEO STREAM</span>
+        <span id="currentQualityBadge" class="quality-badge">AUTO</span>
+      </div>
+      <div id="videoTitle" class="video-title">No active YouTube video detected</div>
+    </section>
+
+    <!-- Resolution Master Control -->
+    <section class="card">
+      <div class="card-header">
+        <span class="card-label">DEFAULT RESOLUTION ENFORCER</span>
+      </div>
+      <div class="res-control-row">
+        <select id="resSelect" class="hud-select">
+          <option value="auto">Auto (Adaptive)</option>
+          <option value="4320p">8K Ultra HD (4320p)</option>
+          <option value="2160p">4K UHD (2160p)</option>
+          <option value="1440p">2K QHD (1440p)</option>
+          <option value="1080p">1080p Full HD</option>
+          <option value="720p">720p HD</option>
+          <option value="480p">480p Standard</option>
+        </select>
+        <button id="btnApplyRes" class="btn-hud-primary">APPLY</button>
+      </div>
+      <div class="hint-text">Auto-switches every video to this quality instantly.</div>
+    </section>
+
+    <!-- Speed Controls -->
+    <section class="card">
+      <div class="card-header">
+        <span class="card-label">PLAYBACK SPEED</span>
+        <span id="speedValueLabel" class="speed-label">1.0x</span>
+      </div>
+      <div class="speed-button-group">
+        <button class="speed-btn" data-speed="1.0">1x</button>
+        <button class="speed-btn" data-speed="1.25">1.25x</button>
+        <button class="speed-btn" data-speed="1.5">1.5x</button>
+        <button class="speed-btn" data-speed="1.75">1.75x</button>
+        <button class="speed-btn" data-speed="2.0">2x</button>
+      </div>
+    </section>
+
+    <!-- Audio Boost -->
+    <section class="card">
+      <div class="card-header">
+        <span class="card-label">AUDIO BOOST AMPLIFIER</span>
+        <span id="boostValueLabel" class="boost-label">100%</span>
+      </div>
+      <input type="range" id="boostSlider" min="1.0" max="3.0" step="0.1" value="1.0" class="hud-slider">
+      <div class="slider-marks">
+        <span>Normal (100%)</span>
+        <span>200%</span>
+        <span>Max (300%)</span>
+      </div>
+    </section>
+
+    <!-- Quick Utilities -->
+    <section class="card utils-grid">
+      <button id="btnPip" class="btn-util">
+        <span class="util-icon">⧉</span>
+        <span>Picture in Picture</span>
+      </button>
+      <button id="btnCapture" class="btn-util">
+        <span class="util-icon">📸</span>
+        <span>HD Screenshot</span>
+      </button>
+    </section>
+
+    <!-- Sentinel Shield Settings -->
+    <section class="card">
+      <div class="card-header">
+        <span class="card-label">SENTINEL SHIELD DEFENSE</span>
+      </div>
+      <div class="toggle-list">
+        <label class="toggle-row">
+          <span>Auto-Skip Video Ads (0.01ms)</span>
+          <input type="checkbox" id="toggleAutoSkip" checked>
+          <span class="switch"></span>
+        </label>
+        <label class="toggle-row">
+          <span>Auto-Resume "Still Watching?"</span>
+          <input type="checkbox" id="toggleAutoDismiss" checked>
+          <span class="switch"></span>
+        </label>
+        <label class="toggle-row">
+          <span>Show On-Player Resolution HUD</span>
+          <input type="checkbox" id="togglePlayerHUD" checked>
+          <span class="switch"></span>
+        </label>
+        <label class="toggle-row">
+          <span>Block Banners & Feed Ads</span>
+          <input type="checkbox" id="toggleAdBanners" checked>
+          <span class="switch"></span>
+        </label>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="hud-footer">
+      <span>STARK INDUSTRIES • J.A.R.V.I.S. SENTINEL</span>
+      <span class="safari-tag">SAFARI & CHROME READY</span>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,24 +1,56 @@
 {
   "manifest_version": 3,
   "name": "J.A.R.V.I.S. YouTube Sentinel & Media Bridge",
-  "version": "1.0.0",
-  "description": "Autonomous 0.01ms YouTube Ad Annihilator & Direct Media Controller for Stark J.A.R.V.I.S. Assistant",
+  "version": "2.0.0",
+  "description": "Autonomous 0.01ms YouTube Ad Neutralizer, Auto 4K/HD Resolution Enforcer & Stark J.A.R.V.I.S. Media Bridge",
   "permissions": [
     "storage"
   ],
   "host_permissions": [
     "*://*.youtube.com/*",
+    "http://localhost:3000/*",
     "https://localhost:3000/*",
+    "http://127.0.0.1:3000/*",
     "https://127.0.0.1:3000/*"
   ],
+  "action": {
+    "default_title": "J.A.R.V.I.S. YouTube Sentinel",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
   "content_scripts": [
     {
-      "matches": ["*://*.youtube.com/*"],
-      "js": ["content.js"],
+      "matches": [
+        "*://*.youtube.com/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "css": [
+        "styles.css"
+      ],
       "run_at": "document_start"
     }
   ],
-  "action": {
-    "default_title": "J.A.R.V.I.S. YouTube Sentinel Active"
-  }
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "inject.js"
+      ],
+      "matches": [
+        "*://*.youtube.com/*"
+      ]
+    }
+  ]
 }

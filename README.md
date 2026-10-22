@@ -211,6 +211,13 @@ jarvis-assistant/
 ├── requirements.txt        # 📦 Python Dependencies (FastAPI, Uvicorn, Psutil, etc.)
 ├── test_jarvis.py          # 🧪 Professional QA Automated Test Suite
 ├── android-setup-guide.md  # 🏍️ Locked Phone Bike/Pocket Setup Guide
+├── chrome-extension/       # 🛡️ J.A.R.V.I.S. YouTube Sentinel v2.0 (Safari & Chrome)
+│   ├── manifest.json       # Manifest V3 Configuration
+│   ├── content.js          # Safe Ad Neutralizer, HUD Injector & Media Bridge
+│   ├── inject.js           # Main-World YouTube HTML5 Player API Bridge (4K/HD)
+│   ├── styles.css          # Cyberpunk HUD & Ad Blocker CSS
+│   ├── popup.html / .js    # Arc Reactor HUD Popup & Resolution Enforcer
+│   └── README.md           # Safari & Chrome Installation Guide
 ├── public/                 # 🌐 Frontend Holographic HUD & PWA
 │   ├── index.html          # Stark HUD Layout & Telemetry Grid
 │   ├── styles.css          # Cybernetic Glassmorphism CSS Design System
