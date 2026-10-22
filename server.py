@@ -1294,16 +1294,18 @@ def execute_mac_command(action: str, params: Dict[str, Any] = {}) -> Dict[str, A
                 def _bg_download(target_url: str, res_choice: str):
                     try:
                         downloads_dir = os.path.expanduser("~/Downloads")
-                        # Use current Python runtime with -m yt_dlp to avoid standalone PyInstaller Gatekeeper verification
                         py_bin = sys.executable or "python3"
-                        # Fallback order: venv python -m yt_dlp, then which yt-dlp
-                        dl_runner = f'"{py_bin}" -m yt_dlp'
+                        # Robust multi-client runner to bypass YouTube SABR / bot-guard challenges
+                        dl_runner = f'"{py_bin}" -m yt_dlp --extractor-args "youtube:player_client=android,ios,web"'
                         
                         print(f"[AADI DOWNLOAD] Starting native download: {target_url} ({res_choice})")
 
                         if res_choice in ("mp3", "audio"):
                             dl_cmd = f'{dl_runner} --no-playlist -x --audio-format mp3 -o "{downloads_dir}/%(title)s.%(ext)s" "{target_url}"'
-                            subprocess.run(dl_cmd, shell=True)
+                            ret = subprocess.run(dl_cmd, shell=True)
+                            if ret.returncode != 0:
+                                fallback_cmd = f'"{py_bin}" -m yt_dlp --extractor-args "youtube:player_client=android" -x --audio-format mp3 -o "{downloads_dir}/%(title)s.%(ext)s" "{target_url}"'
+                                subprocess.run(fallback_cmd, shell=True)
                             print(f"[AADI DOWNLOAD] Finished MP3 download to ~/Downloads")
                             subprocess.run(["osascript", "-e", 'display notification "YouTube Audio downloaded to ~/Downloads" with title "AADI Downloader"'])
                             return
@@ -1320,11 +1322,15 @@ def execute_mac_command(action: str, params: Dict[str, Any] = {}) -> Dict[str, A
                         elif "480" in res_choice:
                             max_h = 480
 
-                        fmt = f"bestvideo[height<={max_h}]+bestaudio/best[height<={max_h}]/best"
+                        fmt = f"bestvideo[height<={max_h}]+bestaudio/best[height<={max_h}]/best/18"
                         dl_cmd = f'{dl_runner} --no-playlist -f "{fmt}" --merge-output-format mp4 -o "{downloads_dir}/%(title)s_{res_choice}.%(ext)s" "{target_url}"'
-                        subprocess.run(dl_cmd, shell=True)
+                        ret = subprocess.run(dl_cmd, shell=True)
+                        if ret.returncode != 0:
+                            fallback_cmd = f'"{py_bin}" -m yt_dlp --extractor-args "youtube:player_client=android" -o "{downloads_dir}/%(title)s.%(ext)s" "{target_url}"'
+                            subprocess.run(fallback_cmd, shell=True)
+
                         print(f"[AADI DOWNLOAD] Finished {res_choice} video download to ~/Downloads")
-                        subprocess.run(["osascript", "-e", f'display notification "Video downloaded in {res_choice} to ~/Downloads" with title "AADI Downloader"'])
+                        subprocess.run(["osascript", "-e", f'display notification "Video downloaded to ~/Downloads" with title "AADI Downloader"'])
                     except Exception as err:
                         print(f"[AADI DOWNLOAD ERROR] {err}")
                     finally:
