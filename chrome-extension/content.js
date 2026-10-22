@@ -20,7 +20,7 @@
     hideAdBanners: true,
     showPlayerHUD: true,
     volumeBoost: 1.0,
-    wsUrl: 'wss://127.0.0.1:3000/ws'
+    wsUrl: 'ws://127.0.0.1:3000/ws'
   };
 
   let currentQuality = 'unknown';
@@ -66,6 +66,11 @@
   if (browserAPI && browserAPI.storage && browserAPI.storage.local) {
     browserAPI.storage.local.get(config, (items) => {
       if (items) {
+        // Sanitize legacy wss:// localhost url to plain ws:// for HTTP server
+        if (items.wsUrl && items.wsUrl.startsWith('wss://127.0.0.1')) {
+          items.wsUrl = 'ws://127.0.0.1:3000/ws';
+          browserAPI.storage.local.set({ wsUrl: 'ws://127.0.0.1:3000/ws' });
+        }
         config = { ...config, ...items };
         applyAudioGain(config.volumeBoost);
         applyResolutionPreference(config.preferredResolution);
@@ -656,12 +661,16 @@
   let wsRetryDelay = 2000;
 
   function connectAadiBridge() {
+    if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) {
+      return;
+    }
+
     try {
-      const targetUrl = config.wsUrl || 'wss://127.0.0.1:3000/ws';
+      const targetUrl = config.wsUrl || 'ws://127.0.0.1:3000/ws';
       ws = new WebSocket(targetUrl);
 
       ws.onopen = () => {
-        console.log('[AADI SENTINEL] Connected to AADI Core WebSocket.');
+        console.log(`[AADI SENTINEL] Connected to AADI Core WebSocket via ${targetUrl}`);
         wsRetryDelay = 2000;
         ws.send(JSON.stringify({
           type: 'SENTINEL_HANDSHAKE',
@@ -684,9 +693,6 @@
       };
 
       ws.onclose = () => {
-        if (config.wsUrl && config.wsUrl.startsWith('wss://127.0.0.1') && wsRetryDelay > 4000) {
-          config.wsUrl = 'ws://127.0.0.1:3000/ws';
-        }
         wsRetryDelay = Math.min(10000, wsRetryDelay * 1.5);
         setTimeout(connectAadiBridge, wsRetryDelay);
       };
