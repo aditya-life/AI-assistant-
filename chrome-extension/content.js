@@ -23,6 +23,51 @@
     wsUrl: 'ws://127.0.0.1:3000/ws'
   };
 
+  const QUALITY_MAP = {
+    '8k': 'highres',
+    '4320p': 'highres',
+    'highres': 'highres',
+    '4k': 'hd2160',
+    '2160p': 'hd2160',
+    'hd2160': 'hd2160',
+    '1440p': 'hd1440',
+    '2k': 'hd1440',
+    'hd1440': 'hd1440',
+    '1080p': 'hd1080',
+    'fhd': 'hd1080',
+    'hd1080': 'hd1080',
+    '720p': 'hd720',
+    'hd': 'hd720',
+    'hd720': 'hd720',
+    '480p': 'large',
+    'large': 'large',
+    '360p': 'medium',
+    'medium': 'medium',
+    '240p': 'small',
+    'small': 'small',
+    '144p': 'tiny',
+    'tiny': 'tiny',
+    'auto': 'auto'
+  };
+
+  function getCurrentQualityEstimate() {
+    if (currentQuality && currentQuality !== 'unknown') {
+      return currentQuality;
+    }
+    const video = document.querySelector('video');
+    if (video && video.videoHeight > 0) {
+      const h = video.videoHeight;
+      if (h >= 2160) return 'hd2160';
+      if (h >= 1440) return 'hd1440';
+      if (h >= 1080) return 'hd1080';
+      if (h >= 720) return 'hd720';
+      if (h >= 480) return 'large';
+      if (h >= 360) return 'medium';
+      return 'small';
+    }
+    return 'auto';
+  }
+
   let currentQuality = 'unknown';
   let availableQualities = [];
   let wasMutedBySentinel = false;
@@ -132,18 +177,110 @@
   });
 
   function applyResolutionPreference(quality) {
+    const targetQ = quality || config.preferredResolution;
+    if (!targetQ) return;
+    const clean = targetQ.toLowerCase();
+
+    // 1. YouTube native localStorage persistent preference
+    const mapped = QUALITY_MAP[clean] || clean;
+    try {
+      if (mapped === 'auto') {
+        localStorage.removeItem('yt-player-quality');
+      } else {
+        localStorage.setItem('yt-player-quality', JSON.stringify({
+          data: mapped,
+          creation: Date.now(),
+          expiration: Date.now() + 2419200000
+        }));
+      }
+    } catch(e) {}
+
+    // 2. Direct postMessage to main-world inject.js
     window.postMessage({
       source: 'AADI_SENTINEL_CS',
       type: 'SET_RESOLUTION',
-      payload: { quality: quality || config.preferredResolution }
+      payload: { quality: targetQ }
     }, '*');
+
+    // 3. Automated Settings Menu Selection (Standalone Fallback)
+    enforceResolutionViaSettingsUI(targetQ);
+  }
+
+  function enforceResolutionViaSettingsUI(targetQuality) {
+    if (!targetQuality) return;
+    const clean = targetQuality.toLowerCase().replace('p', '');
+
+    try {
+      const settingsBtn = document.querySelector('.ytp-settings-button');
+      if (!settingsBtn) return;
+
+      if (isPlayerMenuOpen()) return;
+
+      settingsBtn.click();
+
+      setTimeout(() => {
+        const menuItems = Array.from(document.querySelectorAll('.ytp-menuitem, .ytp-panel-menu .ytp-menuitem'));
+        const qualityMenuItem = menuItems.find(el => {
+          const t = (el.textContent || '').toLowerCase();
+          return t.includes('quality') || t.includes('गुणवत्ता');
+        });
+
+        if (qualityMenuItem) {
+          qualityMenuItem.click();
+
+          setTimeout(() => {
+            const options = Array.from(document.querySelectorAll('.ytp-quality-menu .ytp-menuitem, .ytp-panel-menu .ytp-menuitem'));
+            let match = null;
+
+            if (clean === 'auto') {
+              match = options.find(el => (el.textContent || '').toLowerCase().includes('auto'));
+            } else if (clean === '4k' || clean === '2160') {
+              match = options.find(el => el.textContent.includes('2160') || el.textContent.includes('4K'));
+            } else if (clean === '2k' || clean === '1440') {
+              match = options.find(el => el.textContent.includes('1440') || el.textContent.includes('2K'));
+            } else if (clean === '1080') {
+              match = options.find(el => el.textContent.includes('1080'));
+            } else if (clean === '720') {
+              match = options.find(el => el.textContent.includes('720'));
+            } else if (clean === '480') {
+              match = options.find(el => el.textContent.includes('480'));
+            } else if (clean === '360') {
+              match = options.find(el => el.textContent.includes('360'));
+            }
+
+            if (match) {
+              match.click();
+              console.log('[AADI SENTINEL] Native YouTube quality applied:', match.textContent.trim());
+            }
+
+            const activeMenu = document.querySelector('.ytp-settings-menu');
+            if (activeMenu && getComputedStyle(activeMenu).display !== 'none') {
+              settingsBtn.click();
+            }
+          }, 80);
+        } else {
+          settingsBtn.click();
+        }
+      }, 80);
+    } catch (e) {}
   }
 
   function applyPlaybackSpeed(speed) {
+    const s = parseFloat(speed);
+    if (isNaN(s)) return;
+
+    // 1. Direct HTML5 Video DOM Manipulation (100% reliable standalone)
+    const video = document.querySelector('video');
+    if (video) {
+      video.playbackRate = s;
+      video.defaultPlaybackRate = s;
+    }
+
+    // 2. Dispatch to inject.js
     window.postMessage({
       source: 'AADI_SENTINEL_CS',
       type: 'SET_PLAYBACK_SPEED',
-      payload: { speed: speed }
+      payload: { speed: s }
     }, '*');
   }
 
@@ -366,7 +503,8 @@
     if (!hudButton) return;
     const badge = hudButton.querySelector('.jarvis-res-text');
     if (badge) {
-      const label = formatQualityLabel(currentQuality);
+      const activeQ = currentQuality !== 'unknown' ? currentQuality : getCurrentQualityEstimate();
+      const label = formatQualityLabel(activeQ);
       badge.textContent = label;
     }
 
@@ -795,11 +933,12 @@
       }
 
       if (request.action === 'GET_STATUS') {
+        const activeQ = currentQuality !== 'unknown' ? currentQuality : getCurrentQualityEstimate();
         sendResponse({
           success: true,
           assistant: 'AADI',
           title: document.title,
-          currentQuality: currentQuality,
+          currentQuality: activeQ,
           availableQualities: availableQualities,
           preferredResolution: config.preferredResolution,
           playbackRate: video ? video.playbackRate : 1.0,
