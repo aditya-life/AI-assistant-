@@ -31,6 +31,37 @@
   let gainNode = null;
   let audioSourceNode = null;
 
+  // Settings Interaction Lock: Pauses all dismissal clicks when user touches settings
+  let settingsMenuLocked = false;
+  let unlockTimer = null;
+
+  function lockSettingsInteraction() {
+    settingsMenuLocked = true;
+    clearTimeout(unlockTimer);
+    unlockTimer = setTimeout(() => {
+      settingsMenuLocked = false;
+    }, 15000); // 15 seconds grace period
+  }
+
+  // Capture phase listener: Catch settings click BEFORE any DOM observer or interval
+  document.addEventListener('click', (e) => {
+    if (e.target && e.target.closest) {
+      if (e.target.closest('.ytp-settings-button') ||
+          e.target.closest('.ytp-settings-menu') ||
+          e.target.closest('.ytp-popup.ytp-settings-menu') ||
+          e.target.closest('.ytp-panel') ||
+          e.target.closest('.ytp-quality-menu')) {
+        lockSettingsInteraction();
+      }
+    }
+  }, true);
+
+  document.addEventListener('keydown', (e) => {
+    if (settingsMenuLocked && (e.key === 'Escape' || e.key === 'Enter')) {
+      setTimeout(() => { settingsMenuLocked = false; }, 400);
+    }
+  }, true);
+
   // Load Saved Configuration from Storage
   if (browserAPI && browserAPI.storage && browserAPI.storage.local) {
     browserAPI.storage.local.get(config, (items) => {
@@ -67,6 +98,7 @@
   // =========================================================
   function injectMainWorldBridge() {
     try {
+      if (window.__JARVIS_SENTINEL_INJECTED__) return;
       const script = document.createElement('script');
       if (browserAPI && browserAPI.runtime && browserAPI.runtime.getURL) {
         script.src = browserAPI.runtime.getURL('inject.js');
@@ -75,9 +107,8 @@
       }
       script.onload = () => script.remove();
       (document.head || document.documentElement).appendChild(script);
-      console.log('[JARVIS SENTINEL] Main-world bridge injected successfully.');
     } catch (e) {
-      console.warn('[JARVIS SENTINEL] Inject bridge warning:', e);
+      // Safe fallback
     }
   }
 
@@ -112,69 +143,86 @@
   }
 
   // =========================================================
-  // 2. ULTRA-SAFE AD NEUTRALIZER (Fixes Settings Menu Freeze)
+  // 2. ULTRA-SAFE AD NEUTRALIZER (Zero Settings Interference)
   // =========================================================
 
-  // Critical Check: Determine if the player settings menu or any dropdown is currently open
   function isPlayerMenuOpen() {
+    if (settingsMenuLocked) return true;
+
     // 1. YouTube native settings gear popup
     const settingsMenu = document.querySelector('.ytp-settings-menu, .ytp-popup.ytp-settings-menu');
     if (settingsMenu && settingsMenu.offsetParent !== null && getComputedStyle(settingsMenu).display !== 'none') {
       return true;
     }
-    // 2. Any active panels or submenus inside the player
-    const panels = document.querySelectorAll('.ytp-panel-menu');
+
+    // 2. Settings button aria-expanded state
+    const settingsBtn = document.querySelector('.ytp-settings-button');
+    if (settingsBtn && (settingsBtn.getAttribute('aria-expanded') === 'true' || settingsBtn.classList.contains('ytp-button-active'))) {
+      return true;
+    }
+
+    // 3. Submenus and quality panels
+    const panels = document.querySelectorAll('.ytp-panel-menu, .ytp-quality-menu');
     for (const p of panels) {
       if (p.offsetParent !== null && getComputedStyle(p).display !== 'none') {
         return true;
       }
     }
-    // 3. User is actively hovering or focusing settings button
-    const settingsBtn = document.querySelector('.ytp-settings-button');
-    if (settingsBtn && (document.activeElement === settingsBtn || settingsBtn.getAttribute('aria-expanded') === 'true')) {
+
+    // 4. Video player popup animating
+    const player = document.querySelector('#movie_player, .html5-video-player');
+    if (player && (player.classList.contains('ytp-settings-menu-active') || player.classList.contains('ytp-popup-animating'))) {
       return true;
     }
+
     return false;
   }
 
   function neutralizeAds() {
     if (!config.autoSkipAds) return;
 
+    // CRITICAL GUARD: Never touch anything if user is navigating settings!
+    if (isPlayerMenuOpen()) {
+      return;
+    }
+
     try {
       const player = document.querySelector('#movie_player, .html5-video-player');
       const isAd = player && (player.classList.contains('ad-showing') || player.classList.contains('ad-interrupting'));
       const adVideo = document.querySelector('video');
 
-      // 2A. Verified Ad Skip Buttons
-      const skipSelectors = [
-        '.ytp-ad-skip-button-modern',
-        '.ytp-ad-skip-button',
-        '.ytp-skip-ad-button',
-        '.ytp-ad-skip-button-slot button',
-        'button.ytp-ad-skip-button-modern',
-        '.ytp-ad-overlay-close-button'
-      ];
+      // 2A. Verified Ad Skip Buttons - ONLY when ad is actively showing!
+      if (isAd) {
+        const skipSelectors = [
+          '.ytp-ad-skip-button-modern',
+          '.ytp-ad-skip-button',
+          '.ytp-skip-ad-button',
+          '.ytp-ad-skip-button-slot button',
+          'button.ytp-ad-skip-button-modern',
+          '.ytp-ad-overlay-close-button'
+        ];
 
-      for (const selector of skipSelectors) {
-        const buttons = document.querySelectorAll(selector);
-        for (const btn of buttons) {
-          if (btn && btn.offsetParent !== null && getComputedStyle(btn).display !== 'none') {
-            btn.click();
-            console.log('[JARVIS SENTINEL] Verified Skip Button Clicked!');
+        for (const selector of skipSelectors) {
+          const buttons = document.querySelectorAll(selector);
+          for (const btn of buttons) {
+            if (btn && btn.offsetParent !== null && getComputedStyle(btn).display !== 'none') {
+              btn.click();
+              console.log('[JARVIS SENTINEL] Verified Skip Button Clicked!');
+            }
           }
         }
-      }
 
-      // 2B. Fast-forward Video Ad Stream Instantly
-      if (isAd && adVideo) {
-        if (!wasMutedBySentinel) {
-          previousPlaybackRate = adVideo.playbackRate || 1.0;
-          wasMutedBySentinel = true;
-        }
-        adVideo.muted = true;
-        if (!isNaN(adVideo.duration) && adVideo.duration > 0) {
-          adVideo.currentTime = adVideo.duration + 2;
-          adVideo.playbackRate = 16.0;
+        // 2B. Fast-forward Video Ad Stream Instantly
+        if (adVideo) {
+          if (!wasMutedBySentinel) {
+            previousPlaybackRate = adVideo.playbackRate || 1.0;
+            wasMutedBySentinel = true;
+          }
+          adVideo.muted = true;
+          if (!isNaN(adVideo.duration) && adVideo.duration > 0) {
+            adVideo.currentTime = adVideo.duration + 2;
+            adVideo.playbackRate = 16.0;
+          }
         }
       } else if (!isAd && wasMutedBySentinel && adVideo) {
         // Restore audio & speed once ad finishes
@@ -183,9 +231,8 @@
         adVideo.playbackRate = previousPlaybackRate || 1.0;
       }
 
-      // 2C. SAFE Dialog & Overlay Dismissal
-      // IMPORTANT: DO NOT execute dismiss clicks if user is inside the Settings menu!
-      if (!isPlayerMenuOpen() && config.autoDismissDialogs) {
+      // 2C. SAFE Dialog & Overlay Dismissal - Only when settings menu is completely closed
+      if (config.autoDismissDialogs) {
         // Handle "Video paused. Continue watching?" prompt safely
         const confirmDialog = document.querySelector('yt-confirm-dialog-renderer');
         if (confirmDialog && confirmDialog.offsetParent !== null && getComputedStyle(confirmDialog).display !== 'none') {
@@ -201,7 +248,7 @@
 
         // Handle YouTube Anti-Adblock modal cleanly without closing normal menus
         const enforcementModal = document.querySelector('ytd-enforcement-message-view-model');
-        if (enforcementModal && enforcementModal.offsetParent !== null) {
+        if (enforcementModal && enforcementModal.offsetParent !== null && getComputedStyle(enforcementModal).display !== 'none') {
           const dismissBtn = enforcementModal.querySelector('#dismiss-button button, button[aria-label*="Dismiss"]');
           if (dismissBtn && dismissBtn.offsetParent !== null) {
             dismissBtn.click();
@@ -231,10 +278,16 @@
 
   // Observe DOM mutations safely
   const observer = new MutationObserver((mutations) => {
-    // Skip mutations generated inside settings menu or Jarvis HUD to prevent loop
+    // Skip mutations inside settings menu or Jarvis HUD to prevent loop
     for (let i = 0; i < mutations.length; i++) {
       const target = mutations[i].target;
-      if (target && target.closest && (target.closest('.ytp-settings-menu') || target.closest('.jarvis-res-menu') || target.closest('.jarvis-res-btn'))) {
+      if (target && target.closest && (
+          target.closest('.ytp-settings-menu') ||
+          target.closest('.ytp-popup.ytp-settings-menu') ||
+          target.closest('.ytp-panel') ||
+          target.closest('.jarvis-res-menu') ||
+          target.closest('.jarvis-res-btn')
+      )) {
         return;
       }
     }
@@ -243,7 +296,9 @@
 
   function startObserver() {
     const target = document.getElementById('movie_player') || document.body || document.documentElement;
-    observer.observe(target, { childList: true, subtree: true });
+    if (target) {
+      observer.observe(target, { childList: true, subtree: true });
+    }
   }
 
   if (document.readyState === 'loading') {
@@ -252,16 +307,16 @@
     startObserver();
   }
 
-  // Low-frequency safety poll (300ms instead of aggressive 50ms)
+  // Low-frequency safety poll (checking only when ad is present)
   setInterval(() => {
     const player = document.querySelector('#movie_player, .html5-video-player');
     if (player && (player.classList.contains('ad-showing') || document.querySelector('.ytp-ad-skip-button-modern, .ytp-ad-skip-button'))) {
       neutralizeAds();
     }
-  }, 300);
+  }, 400);
 
   // =========================================================
-  // 3. J.A.R.V.I.S. ON-PLAYER RESOLUTION HUD
+  // 3. J.A.R.V.I.S. ON-PLAYER RESOLUTION HUD (Zero NotFoundError)
   // =========================================================
   let hudButton = null;
   let hudMenu = null;
@@ -321,6 +376,45 @@
     }
   }
 
+  // Safe Insertion Helper: NEVER throws NotFoundError in Safari
+  function safelyInsertHUDButton(rightControls, button) {
+    try {
+      const settingsBtn = rightControls.querySelector('.ytp-settings-button');
+      if (settingsBtn) {
+        // If settingsBtn is an immediate child of rightControls
+        if (settingsBtn.parentNode === rightControls) {
+          rightControls.insertBefore(button, settingsBtn);
+          return;
+        }
+
+        // Find direct child of rightControls that contains settingsBtn
+        let current = settingsBtn;
+        while (current.parentNode && current.parentNode !== rightControls && current.parentNode !== document.body) {
+          current = current.parentNode;
+        }
+
+        if (current.parentNode === rightControls) {
+          rightControls.insertBefore(button, current);
+          return;
+        }
+
+        // If settingsBtn's parent is valid, insert before settingsBtn
+        if (settingsBtn.parentNode) {
+          settingsBtn.parentNode.insertBefore(button, settingsBtn);
+          return;
+        }
+      }
+
+      // Safe fallback: append directly
+      rightControls.appendChild(button);
+    } catch (err) {
+      console.warn('[JARVIS SENTINEL] Safe insert fallback:', err);
+      try {
+        rightControls.appendChild(button);
+      } catch (e) {}
+    }
+  }
+
   function injectPlayerHUD() {
     if (!config.showPlayerHUD) return;
     if (document.querySelector('.jarvis-res-btn')) return;
@@ -330,75 +424,89 @@
     if (!rightControls || !player) return;
 
     // Create Button
-    hudButton = document.createElement('button');
-    hudButton.className = 'ytp-button jarvis-res-btn';
-    hudButton.setAttribute('title', 'J.A.R.V.I.S. Quality Sentinel');
-    hudButton.setAttribute('aria-label', 'J.A.R.V.I.S. Resolution Switcher');
-    hudButton.innerHTML = `
-      <div class="jarvis-res-pill">
-        <span class="jarvis-res-icon">⚡</span>
-        <span class="jarvis-res-text">${formatQualityLabel(currentQuality)}</span>
-        <span class="jarvis-res-caret">▼</span>
-      </div>
-    `;
+    if (!hudButton) {
+      hudButton = document.createElement('button');
+      hudButton.className = 'ytp-button jarvis-res-btn';
+      hudButton.setAttribute('title', 'J.A.R.V.I.S. Quality Sentinel');
+      hudButton.setAttribute('aria-label', 'J.A.R.V.I.S. Resolution Switcher');
+      hudButton.setAttribute('type', 'button');
+      hudButton.innerHTML = `
+        <div class="jarvis-res-pill">
+          <span class="jarvis-res-icon">⚡</span>
+          <span class="jarvis-res-text">${formatQualityLabel(currentQuality)}</span>
+          <span class="jarvis-res-caret">▼</span>
+        </div>
+      `;
 
-    // Create Menu
-    hudMenu = document.createElement('div');
-    hudMenu.className = 'jarvis-res-menu';
-    hudMenu.innerHTML = `
-      <div class="jarvis-menu-header">
-        <span>JARVIS RESOLUTION</span>
-      </div>
-      <button class="jarvis-menu-item" data-quality="auto">Auto (Default)</button>
-      <button class="jarvis-menu-item" data-quality="4320p">8K Ultra HD</button>
-      <button class="jarvis-menu-item" data-quality="2160p">4K UHD (2160p)</button>
-      <button class="jarvis-menu-item" data-quality="1440p">2K QHD (1440p)</button>
-      <button class="jarvis-menu-item" data-quality="1080p">1080p Full HD</button>
-      <button class="jarvis-menu-item" data-quality="720p">720p HD</button>
-      <button class="jarvis-menu-item" data-quality="480p">480p SD</button>
-    `;
-
-    // Toggle menu
-    hudButton.addEventListener('click', (e) => {
-      e.stopPropagation();
-      hudMenu.classList.toggle('open');
-    });
-
-    // Handle Option Click
-    hudMenu.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const item = e.target.closest('.jarvis-menu-item');
-      if (!item) return;
-
-      const targetQuality = item.getAttribute('data-quality');
-      config.preferredResolution = targetQuality;
-
-      if (browserAPI && browserAPI.storage && browserAPI.storage.local) {
-        browserAPI.storage.local.set({ preferredResolution: targetQuality });
-      }
-
-      applyResolutionPreference(targetQuality);
-      showHUDToast(`J.A.R.V.I.S.: Resolution set to ${formatQualityLabel(targetQuality)}`);
-      hudMenu.classList.remove('open');
-      updatePlayerHUDBadge();
-    });
-
-    // Close on outside click
-    document.addEventListener('click', (e) => {
-      if (hudMenu && !hudMenu.contains(e.target) && !hudButton.contains(e.target)) {
-        hudMenu.classList.remove('open');
-      }
-    });
-
-    // Insert before the settings button for natural placement
-    const settingsBtn = rightControls.querySelector('.ytp-settings-button');
-    if (settingsBtn) {
-      rightControls.insertBefore(hudButton, settingsBtn);
-    } else {
-      rightControls.appendChild(hudButton);
+      // Toggle menu on click
+      hudButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        if (hudMenu) {
+          hudMenu.classList.toggle('open');
+        }
+      });
     }
 
-    player.appendChild(hudMenu);
+    // Create Menu
+    if (!hudMenu) {
+      hudMenu = document.createElement('div');
+      hudMenu.className = 'jarvis-res-menu';
+      hudMenu.innerHTML = `
+        <div class="jarvis-menu-header">
+          <span>JARVIS RESOLUTION</span>
+        </div>
+        <button type="button" class="jarvis-menu-item" data-quality="auto">Auto (Default)</button>
+        <button type="button" class="jarvis-menu-item" data-quality="4320p">8K Ultra HD</button>
+        <button type="button" class="jarvis-menu-item" data-quality="2160p">4K UHD (2160p)</button>
+        <button type="button" class="jarvis-menu-item" data-quality="1440p">2K QHD (1440p)</button>
+        <button type="button" class="jarvis-menu-item" data-quality="1080p">1080p Full HD</button>
+        <button type="button" class="jarvis-menu-item" data-quality="720p">720p HD</button>
+        <button type="button" class="jarvis-menu-item" data-quality="480p">480p SD</button>
+      `;
+
+      // Handle Option Click
+      hudMenu.addEventListener('click', (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        const item = e.target.closest('.jarvis-menu-item');
+        if (!item) return;
+
+        const targetQuality = item.getAttribute('data-quality');
+        config.preferredResolution = targetQuality;
+
+        if (browserAPI && browserAPI.storage && browserAPI.storage.local) {
+          browserAPI.storage.local.set({ preferredResolution: targetQuality });
+        }
+
+        applyResolutionPreference(targetQuality);
+        showHUDToast(`J.A.R.V.I.S.: Resolution set to ${formatQualityLabel(targetQuality)}`);
+        hudMenu.classList.remove('open');
+        updatePlayerHUDBadge();
+      });
+
+      // Close on outside click
+      document.addEventListener('click', (e) => {
+        if (hudMenu && !hudMenu.contains(e.target) && !hudButton.contains(e.target)) {
+          hudMenu.classList.remove('open');
+        }
+      });
+    }
+
+    // Safe Insertion of Button into rightControls
+    safelyInsertHUDButton(rightControls, hudButton);
+
+    // Safe Insertion of Menu into player container
+    try {
+      if (hudMenu && !hudMenu.parentNode) {
+        player.appendChild(hudMenu);
+      }
+    } catch (err) {
+      try {
+        document.body.appendChild(hudMenu);
+      } catch (e) {}
+    }
+
     updatePlayerHUDBadge();
   }
 
@@ -524,7 +632,6 @@
       };
 
       ws.onclose = () => {
-        // Try ws:// fallback if wss:// fails on localhost
         if (config.wsUrl && config.wsUrl.startsWith('wss://127.0.0.1') && wsRetryDelay > 4000) {
           config.wsUrl = 'ws://127.0.0.1:3000/ws';
         }
