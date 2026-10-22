@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "lastUpdated": 1792702477,
+  "lastUpdated": 1792702521,
   "intents": [
     {
       "id": "learned_test_1792702440",
@@ -90,7 +90,7 @@
       "reply_hi": "Ji Aditya, Virat Kohli ke baare me: Virat Kohli is an Indian international cricketer and former all-format captain of the Indian national cricket team. He is a right-handed batter and an occasional right-arm medium-pace bowler.",
       "action": null,
       "actionParams": {},
-      "hitCount": 3,
+      "hitCount": 4,
       "learnedAt": 1792702174
     },
     {
