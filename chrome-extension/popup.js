@@ -140,19 +140,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 3. UI Interactions
 
-  // Download Video in Any Selected Resolution
+  // Download Video in Any Selected Resolution (Direct Mac Native Download via AADI Core)
   if (btnDownloadVideo) {
     btnDownloadVideo.addEventListener('click', () => {
       const q = dlQualitySelect ? dlQualitySelect.value : '1080p';
       btnDownloadVideo.textContent = '⏳ STARTING...';
-      if (dlStatusHint) dlStatusHint.textContent = `Dispatched ${q} download to Mac ~/Downloads...`;
+      if (dlStatusHint) dlStatusHint.textContent = `Sending ${q} download task to AADI Core...`;
 
-      sendTabMessage({ action: 'DOWNLOAD_VIDEO', quality: q, url: activeTabUrl }, (res) => {
+      fetch('http://127.0.0.1:3000/api/webhook/trigger', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'DOWNLOAD_YOUTUBE',
+          url: activeTabUrl,
+          quality: q
+        })
+      })
+      .then(res => {
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        return res.json();
+      })
+      .then(data => {
         btnDownloadVideo.textContent = '✓ DOWNLOADING';
-        if (dlStatusHint) dlStatusHint.textContent = `✓ Download started! Check your Mac ~/Downloads folder.`;
+        if (dlStatusHint) dlStatusHint.textContent = `✓ Download started! Video saving to Mac ~/Downloads.`;
         setTimeout(() => {
           btnDownloadVideo.textContent = '⬇️ DOWNLOAD';
         }, 3000);
+      })
+      .catch(err => {
+        console.warn('Local AADI server unreachable, using standalone fallback:', err);
+        // Only if local Python server is NOT running at all
+        const match = activeTabUrl.match(/[?&]v=([^&]+)/);
+        if (match && match[1]) {
+          window.open(`https://ssyoutube.com/watch?v=${match[1]}`, '_blank');
+        } else {
+          if (dlStatusHint) dlStatusHint.textContent = 'AADI server offline. Run ./start.sh';
+        }
+        btnDownloadVideo.textContent = '⬇️ DOWNLOAD';
       });
     });
   }

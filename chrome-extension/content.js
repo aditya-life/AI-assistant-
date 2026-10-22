@@ -540,40 +540,38 @@
     const videoUrl = window.location.href;
     const targetQ = quality || '1080p';
 
-    showHUDToast(`AADI: Initiating ${targetQ.toUpperCase()} Download...`);
+    showHUDToast(`AADI: Sending ${targetQ.toUpperCase()} to Mac ~/Downloads...`);
 
-    // If connected to AADI Core WebSocket, trigger background yt-dlp to ~/Downloads
-    if (ws && ws.readyState === WebSocket.OPEN) {
-      ws.send(JSON.stringify({
-        type: 'COMMAND',
-        payload: {
-          action: 'DOWNLOAD_YOUTUBE',
-          params: {
-            url: videoUrl,
-            quality: targetQ
-          }
-        }
-      }));
-      console.log(`[AADI SENTINEL] Dispatched native yt-dlp download: ${targetQ}`);
-      setTimeout(() => {
-        showHUDToast(`✓ Download started to Mac ~/Downloads!`);
-      }, 1000);
-      return true;
-    }
+    // 1. Direct HTTP POST to local AADI Core (Bypasses WebSocket & guarantees direct Mac download)
+    fetch('http://127.0.0.1:3000/api/webhook/trigger', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'DOWNLOAD_YOUTUBE',
+        url: videoUrl,
+        quality: targetQ
+      })
+    })
+    .then(res => {
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return res.json();
+    })
+    .then(data => {
+      showHUDToast(`✓ Download started! Saving to Mac ~/Downloads`);
+      console.log(`[AADI SENTINEL] Native yt-dlp download initiated for ${targetQ}`);
+    })
+    .catch(err => {
+      console.warn('[AADI SENTINEL] Local server offline, using web portal fallback:', err);
+      // Fallback only if local Python server is NOT running
+      const match = videoUrl.match(/[?&]v=([^&]+)/);
+      if (match && match[1]) {
+        window.open(`https://ssyoutube.com/watch?v=${match[1]}`, '_blank');
+      } else {
+        showHUDToast(`AADI: Local server offline. Run ./start.sh`);
+      }
+    });
 
-    // STANDALONE MODE FALLBACK (When local Python server is not running)
-    const match = videoUrl.match(/[?&]v=([^&]+)/);
-    const videoId = match ? match[1] : '';
-
-    if (videoId) {
-      // 100% verified active download portal (SaveFrom / SSYouTube)
-      const fallbackUrl = `https://ssyoutube.com/watch?v=${videoId}`;
-      window.open(fallbackUrl, '_blank');
-      showHUDToast(`AADI Standalone: Opened Download Portal!`);
-    } else {
-      showHUDToast(`AADI: Please open a YouTube video to download.`);
-    }
-    return false;
+    return true;
   }
 
   // =========================================================
@@ -665,45 +663,58 @@
       return;
     }
 
-    try {
-      const targetUrl = config.wsUrl || 'ws://127.0.0.1:3000/ws';
-      ws = new WebSocket(targetUrl);
-
-      ws.onopen = () => {
-        console.log(`[AADI SENTINEL] Connected to AADI Core WebSocket via ${targetUrl}`);
-        wsRetryDelay = 2000;
-        ws.send(JSON.stringify({
-          type: 'SENTINEL_HANDSHAKE',
-          device: 'youtube_sentinel_tab',
-          assistant: 'AADI',
-          version: '2.1.0',
-          title: document.title,
-          url: window.location.href,
-          currentQuality: currentQuality
-        }));
-      };
-
-      ws.onmessage = (event) => {
+    // Probe HTTP endpoint first to ensure server is alive before opening WebSocket
+    fetch('http://127.0.0.1:3000/api/info')
+      .then(res => {
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        return res.json();
+      })
+      .then(() => {
         try {
-          const msg = JSON.parse(event.data);
-          if (msg.type === 'COMMAND' && msg.payload) {
-            handleRemoteCommand(msg.payload.action, msg.payload.params || {});
-          }
+          const targetUrl = 'ws://127.0.0.1:3000/ws';
+          ws = new WebSocket(targetUrl);
+
+          ws.onopen = () => {
+            console.log(`[AADI SENTINEL] Connected to AADI Core WebSocket via ${targetUrl}`);
+            wsRetryDelay = 3000;
+            ws.send(JSON.stringify({
+              type: 'SENTINEL_HANDSHAKE',
+              device: 'youtube_sentinel_tab',
+              assistant: 'AADI',
+              version: '2.1.0',
+              title: document.title,
+              url: window.location.href,
+              currentQuality: currentQuality
+            }));
+          };
+
+          ws.onmessage = (event) => {
+            try {
+              const msg = JSON.parse(event.data);
+              if (msg.type === 'COMMAND' && msg.payload) {
+                handleRemoteCommand(msg.payload.action, msg.payload.params || {});
+              }
+            } catch (e) {}
+          };
+
+          ws.onclose = () => {
+            ws = null;
+            setTimeout(connectAadiBridge, 5000);
+          };
+
+          ws.onerror = () => {
+            if (ws) {
+              try { ws.close(); } catch(e) {}
+              ws = null;
+            }
+          };
+
         } catch (e) {}
-      };
-
-      ws.onclose = () => {
-        wsRetryDelay = Math.min(10000, wsRetryDelay * 1.5);
-        setTimeout(connectAadiBridge, wsRetryDelay);
-      };
-
-      ws.onerror = () => {
-        if (ws) ws.close();
-      };
-
-    } catch (e) {
-      setTimeout(connectAadiBridge, 5000);
-    }
+      })
+      .catch(() => {
+        // Server is not running yet, probe again in 10s
+        setTimeout(connectAadiBridge, 10000);
+      });
   }
 
   function handleRemoteCommand(action, params) {

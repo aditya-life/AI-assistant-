@@ -786,27 +786,31 @@ def execute_mac_command(action: str, params: Dict[str, Any] = {}) -> Dict[str, A
                 def _bg_download(target_url: str, res_choice: str):
                     yt_dlp_bin = "/Users/aditya/.local/bin/yt-dlp" if os.path.exists("/Users/aditya/.local/bin/yt-dlp") else "yt-dlp"
                     downloads_dir = os.path.expanduser("~/Downloads")
+                    print(f"[AADI DOWNLOAD] Starting background download: {target_url} ({res_choice})")
                     try:
                         if res_choice in ("mp3", "audio"):
-                            dl_cmd = f'"{yt_dlp_bin}" -x --audio-format mp3 -o "{downloads_dir}/%(title)s.%(ext)s" "{target_url}"'
+                            dl_cmd = f'"{yt_dlp_bin}" --no-playlist -x --audio-format mp3 -o "{downloads_dir}/%(title)s.%(ext)s" "{target_url}"'
                             subprocess.run(dl_cmd, shell=True)
+                            print(f"[AADI DOWNLOAD] Finished MP3 download to ~/Downloads")
                             subprocess.run(["osascript", "-e", 'display notification "YouTube Audio downloaded to ~/Downloads" with title "AADI Downloader"'])
                             return
 
-                        fmt = "bestvideo[height<=1080]+bestaudio/best"
+                        max_h = 1080
                         if "4320" in res_choice or "8k" in res_choice:
-                            fmt = "bestvideo[height<=4320]+bestaudio/best"
+                            max_h = 4320
                         elif "2160" in res_choice or "4k" in res_choice:
-                            fmt = "bestvideo[height<=2160]+bestaudio/best"
+                            max_h = 2160
                         elif "1440" in res_choice or "2k" in res_choice:
-                            fmt = "bestvideo[height<=1440]+bestaudio/best"
+                            max_h = 1440
                         elif "720" in res_choice:
-                            fmt = "bestvideo[height<=720]+bestaudio/best"
+                            max_h = 720
                         elif "480" in res_choice:
-                            fmt = "bestvideo[height<=480]+bestaudio/best"
+                            max_h = 480
 
-                        dl_cmd = f'"{yt_dlp_bin}" -f "{fmt}" --merge-output-format mp4 -o "{downloads_dir}/%(title)s_{res_choice}.%(ext)s" "{target_url}"'
+                        fmt = f"bestvideo[height<={max_h}]+bestaudio/best[height<={max_h}]/best"
+                        dl_cmd = f'"{yt_dlp_bin}" --no-playlist -f "{fmt}" --merge-output-format mp4 -o "{downloads_dir}/%(title)s_{res_choice}.%(ext)s" "{target_url}"'
                         subprocess.run(dl_cmd, shell=True)
+                        print(f"[AADI DOWNLOAD] Finished {res_choice} video download to ~/Downloads")
                         subprocess.run(["osascript", "-e", f'display notification "Video downloaded in {res_choice} to ~/Downloads" with title "AADI Downloader"'])
                     except Exception as err:
                         print(f"[AADI DOWNLOAD ERROR] {err}")
