@@ -1,5 +1,5 @@
 {
-  "assistantName": "J.A.R.V.I.S.",
+  "assistantName": "AADI",
   "userTitle": "Aditya",
   "language": "hi-IN",
   "theme": "theme-cyan",
@@ -8,7 +8,7 @@
   "hindiVoiceRate": 0.85,
   "voiceGender": "male",
   "autoFollowUp": true,
-  "wakeWord": "jarvis",
+  "wakeWord": "aadi",
   "sentryMode": false,
   "emergencyContact": "+919876543210",
   "macControlsEnabled": true,

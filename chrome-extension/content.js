@@ -1,13 +1,13 @@
 // =========================================================
-// J.A.R.V.I.S. YOUTUBE SENTINEL & DIRECT MEDIA BRIDGE v2.0
-// Autonomous Ad Neutralizer, Auto-HD/4K Enforcer & Stark HUD
+// AADI YOUTUBE SENTINEL & DIRECT MEDIA BRIDGE v2.1
+// Autonomous Ad Neutralizer, Auto-HD/4K Enforcer, Video Downloader
 // Cross-Browser Compatible: Apple Safari & Google Chrome
 // =========================================================
 
 (function() {
   'use strict';
 
-  console.log('[JARVIS SENTINEL v2.0] Active. Armed for ad neutralization & resolution mastery.');
+  console.log('[AADI SENTINEL v2.1] Active. Armed for ad neutralization, resolution mastery & video downloads.');
 
   // Extension API Polyfill
   const browserAPI = typeof chrome !== 'undefined' && chrome.runtime ? chrome : (typeof browser !== 'undefined' ? browser : null);
@@ -98,7 +98,7 @@
   // =========================================================
   function injectMainWorldBridge() {
     try {
-      if (window.__JARVIS_SENTINEL_INJECTED__) return;
+      if (window.__AADI_SENTINEL_INJECTED__) return;
       const script = document.createElement('script');
       if (browserAPI && browserAPI.runtime && browserAPI.runtime.getURL) {
         script.src = browserAPI.runtime.getURL('inject.js');
@@ -116,7 +116,7 @@
 
   // Listen for Player Updates from inject.js
   window.addEventListener('message', (event) => {
-    if (!event.data || event.data.source !== 'JARVIS_SENTINEL_INJECT') return;
+    if (!event.data || event.data.source !== 'AADI_SENTINEL_INJECT') return;
 
     if (event.data.type === 'QUALITY_UPDATE' && event.data.payload) {
       const { currentQuality: q, availableQualities: aq } = event.data.payload;
@@ -128,7 +128,7 @@
 
   function applyResolutionPreference(quality) {
     window.postMessage({
-      source: 'JARVIS_SENTINEL_CS',
+      source: 'AADI_SENTINEL_CS',
       type: 'SET_RESOLUTION',
       payload: { quality: quality || config.preferredResolution }
     }, '*');
@@ -136,7 +136,7 @@
 
   function applyPlaybackSpeed(speed) {
     window.postMessage({
-      source: 'JARVIS_SENTINEL_CS',
+      source: 'AADI_SENTINEL_CS',
       type: 'SET_PLAYBACK_SPEED',
       payload: { speed: speed }
     }, '*');
@@ -207,7 +207,7 @@
           for (const btn of buttons) {
             if (btn && btn.offsetParent !== null && getComputedStyle(btn).display !== 'none') {
               btn.click();
-              console.log('[JARVIS SENTINEL] Verified Skip Button Clicked!');
+              console.log('[AADI SENTINEL] Verified Skip Button Clicked!');
             }
           }
         }
@@ -241,7 +241,7 @@
             const confirmBtn = confirmDialog.querySelector('#confirm-button button, #confirm-button');
             if (confirmBtn && confirmBtn.offsetParent !== null) {
               confirmBtn.click();
-              console.log('[JARVIS SENTINEL] Auto-resumed "Continue watching" prompt.');
+              console.log('[AADI SENTINEL] Auto-resumed "Continue watching" prompt.');
             }
           }
         }
@@ -278,15 +278,15 @@
 
   // Observe DOM mutations safely
   const observer = new MutationObserver((mutations) => {
-    // Skip mutations inside settings menu or Jarvis HUD to prevent loop
+    // Skip mutations inside settings menu or Aadi HUD to prevent loop
     for (let i = 0; i < mutations.length; i++) {
       const target = mutations[i].target;
       if (target && target.closest && (
           target.closest('.ytp-settings-menu') ||
           target.closest('.ytp-popup.ytp-settings-menu') ||
           target.closest('.ytp-panel') ||
-          target.closest('.jarvis-res-menu') ||
-          target.closest('.jarvis-res-btn')
+          target.closest('.aadi-res-menu') ||
+          target.closest('.aadi-res-btn')
       )) {
         return;
       }
@@ -316,7 +316,7 @@
   }, 400);
 
   // =========================================================
-  // 3. J.A.R.V.I.S. ON-PLAYER RESOLUTION HUD (Zero NotFoundError)
+  // 3. A.A.D.I. ON-PLAYER RESOLUTION HUD (Zero NotFoundError)
   // =========================================================
   let hudButton = null;
   let hudMenu = null;
@@ -354,7 +354,7 @@
     clearTimeout(hudToast._timer);
     hudToast._timer = setTimeout(() => {
       hudToast.classList.remove('show');
-    }, 2200);
+    }, 2400);
   }
 
   function updatePlayerHUDBadge() {
@@ -381,13 +381,11 @@
     try {
       const settingsBtn = rightControls.querySelector('.ytp-settings-button');
       if (settingsBtn) {
-        // If settingsBtn is an immediate child of rightControls
         if (settingsBtn.parentNode === rightControls) {
           rightControls.insertBefore(button, settingsBtn);
           return;
         }
 
-        // Find direct child of rightControls that contains settingsBtn
         let current = settingsBtn;
         while (current.parentNode && current.parentNode !== rightControls && current.parentNode !== document.body) {
           current = current.parentNode;
@@ -398,17 +396,15 @@
           return;
         }
 
-        // If settingsBtn's parent is valid, insert before settingsBtn
         if (settingsBtn.parentNode) {
           settingsBtn.parentNode.insertBefore(button, settingsBtn);
           return;
         }
       }
 
-      // Safe fallback: append directly
       rightControls.appendChild(button);
     } catch (err) {
-      console.warn('[JARVIS SENTINEL] Safe insert fallback:', err);
+      console.warn('[AADI SENTINEL] Safe insert fallback:', err);
       try {
         rightControls.appendChild(button);
       } catch (e) {}
@@ -426,9 +422,9 @@
     // Create Button
     if (!hudButton) {
       hudButton = document.createElement('button');
-      hudButton.className = 'ytp-button jarvis-res-btn';
-      hudButton.setAttribute('title', 'J.A.R.V.I.S. Quality Sentinel');
-      hudButton.setAttribute('aria-label', 'J.A.R.V.I.S. Resolution Switcher');
+      hudButton.className = 'ytp-button jarvis-res-btn aadi-res-btn';
+      hudButton.setAttribute('title', 'AADI Quality Sentinel');
+      hudButton.setAttribute('aria-label', 'AADI Resolution Switcher');
       hudButton.setAttribute('type', 'button');
       hudButton.innerHTML = `
         <div class="jarvis-res-pill">
@@ -451,10 +447,10 @@
     // Create Menu
     if (!hudMenu) {
       hudMenu = document.createElement('div');
-      hudMenu.className = 'jarvis-res-menu';
+      hudMenu.className = 'jarvis-res-menu aadi-res-menu';
       hudMenu.innerHTML = `
         <div class="jarvis-menu-header">
-          <span>JARVIS RESOLUTION</span>
+          <span>AADI RESOLUTION</span>
         </div>
         <button type="button" class="jarvis-menu-item" data-quality="auto">Auto (Default)</button>
         <button type="button" class="jarvis-menu-item" data-quality="4320p">8K Ultra HD</button>
@@ -463,26 +459,40 @@
         <button type="button" class="jarvis-menu-item" data-quality="1080p">1080p Full HD</button>
         <button type="button" class="jarvis-menu-item" data-quality="720p">720p HD</button>
         <button type="button" class="jarvis-menu-item" data-quality="480p">480p SD</button>
+        <div class="jarvis-menu-header" style="margin-top:4px; padding-top:4px; border-top:1px solid rgba(0,229,255,0.2);">
+          <span>DOWNLOAD MEDIA</span>
+        </div>
+        <button type="button" class="jarvis-menu-item jarvis-dl-item" data-action="download-current">⬇️ Download Video (HD)</button>
+        <button type="button" class="jarvis-menu-item jarvis-dl-item" data-action="download-audio">🎵 Download MP3 Audio</button>
       `;
 
       // Handle Option Click
       hudMenu.addEventListener('click', (e) => {
         e.stopPropagation();
         e.preventDefault();
+        const dlItem = e.target.closest('.jarvis-dl-item');
+        if (dlItem) {
+          const dlAction = dlItem.getAttribute('data-action');
+          const dlQuality = (dlAction === 'download-audio') ? 'mp3' : (currentQuality || '1080p');
+          triggerVideoDownload(dlQuality);
+          hudMenu.classList.remove('open');
+          return;
+        }
+
         const item = e.target.closest('.jarvis-menu-item');
         if (!item) return;
 
         const targetQuality = item.getAttribute('data-quality');
-        config.preferredResolution = targetQuality;
-
-        if (browserAPI && browserAPI.storage && browserAPI.storage.local) {
-          browserAPI.storage.local.set({ preferredResolution: targetQuality });
+        if (targetQuality) {
+          config.preferredResolution = targetQuality;
+          if (browserAPI && browserAPI.storage && browserAPI.storage.local) {
+            browserAPI.storage.local.set({ preferredResolution: targetQuality });
+          }
+          applyResolutionPreference(targetQuality);
+          showHUDToast(`AADI: Resolution set to ${formatQualityLabel(targetQuality)}`);
+          hudMenu.classList.remove('open');
+          updatePlayerHUDBadge();
         }
-
-        applyResolutionPreference(targetQuality);
-        showHUDToast(`J.A.R.V.I.S.: Resolution set to ${formatQualityLabel(targetQuality)}`);
-        hudMenu.classList.remove('open');
-        updatePlayerHUDBadge();
       });
 
       // Close on outside click
@@ -519,7 +529,50 @@
   setInterval(injectPlayerHUD, 1500);
 
   // =========================================================
-  // 4. WEB AUDIO BOOSTER (Up to 300% Gain)
+  // 4. SMART VIDEO DOWNLOADER (AADI Native yt-dlp + Standalone Fallback)
+  // =========================================================
+  function triggerVideoDownload(quality) {
+    const videoUrl = window.location.href;
+    const targetQ = quality || '1080p';
+
+    showHUDToast(`AADI: Initiating ${targetQ.toUpperCase()} Download...`);
+
+    // If connected to AADI Core WebSocket, trigger background yt-dlp to ~/Downloads
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({
+        type: 'COMMAND',
+        payload: {
+          action: 'DOWNLOAD_YOUTUBE',
+          params: {
+            url: videoUrl,
+            quality: targetQ
+          }
+        }
+      }));
+      console.log(`[AADI SENTINEL] Dispatched native yt-dlp download: ${targetQ}`);
+      setTimeout(() => {
+        showHUDToast(`✓ Download started to Mac ~/Downloads!`);
+      }, 1000);
+      return true;
+    }
+
+    // STANDALONE MODE FALLBACK (When Python server is not running)
+    const match = videoUrl.match(/[?&]v=([^&]+)/);
+    const videoId = match ? match[1] : '';
+
+    if (videoId) {
+      // Safe fast direct web stream portal
+      const fallbackUrl = `https://10downloader.com/download?v=${videoId}`;
+      window.open(fallbackUrl, '_blank');
+      showHUDToast(`AADI Standalone: Opened direct download portal!`);
+    } else {
+      showHUDToast(`AADI: Please open a YouTube video to download.`);
+    }
+    return false;
+  }
+
+  // =========================================================
+  // 5. WEB AUDIO BOOSTER (Up to 300% Gain)
   // =========================================================
   function applyAudioGain(factor) {
     try {
@@ -545,15 +598,15 @@
 
       if (gainNode) {
         gainNode.gain.setValueAtTime(mult, audioCtx.currentTime);
-        console.log(`[JARVIS SENTINEL] Audio gain set to ${Math.round(mult * 100)}%`);
+        console.log(`[AADI SENTINEL] Audio gain set to ${Math.round(mult * 100)}%`);
       }
     } catch (e) {
-      // AudioContext already connected or cross-origin safe error
+      // AudioContext safe error
     }
   }
 
   // =========================================================
-  // 5. HIGH-DEF FRAME CAPTURE (Screenshot)
+  // 6. HIGH-DEF FRAME CAPTURE (Screenshot)
   // =========================================================
   function captureVideoFrame() {
     const video = document.querySelector('video');
@@ -567,7 +620,7 @@
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
       const title = (document.title || 'YouTube').replace(/[^a-zA-Z0-9_-]/g, '_').substring(0, 30);
-      const filename = `JARVIS_${title}_${Date.now()}.png`;
+      const filename = `AADI_${title}_${Date.now()}.png`;
 
       const link = document.createElement('a');
       link.download = filename;
@@ -576,12 +629,12 @@
 
       showHUDToast('HD Frame Captured!');
     } catch (e) {
-      console.warn('[JARVIS SENTINEL] Frame capture error:', e);
+      console.warn('[AADI SENTINEL] Frame capture error:', e);
     }
   }
 
   // =========================================================
-  // 6. PICTURE-IN-PICTURE (PiP)
+  // 7. PICTURE-IN-PICTURE (PiP)
   // =========================================================
   function togglePictureInPicture() {
     const video = document.querySelector('video');
@@ -592,30 +645,29 @@
     } else if (video.requestPictureInPicture) {
       video.requestPictureInPicture().catch(() => {});
     } else if (video.webkitSetPresentationMode) {
-      // Safari specific PiP
       video.webkitSetPresentationMode(video.webkitPresentationMode === 'picture-in-picture' ? 'inline' : 'picture-in-picture');
     }
   }
 
   // =========================================================
-  // 7. DIRECT WEBSOCKET MEDIA BRIDGE TO LOCAL J.A.R.V.I.S. CORE
+  // 8. DIRECT WEBSOCKET MEDIA BRIDGE TO LOCAL A.A.D.I. CORE
   // =========================================================
   let ws = null;
   let wsRetryDelay = 2000;
 
-  function connectJarvisBridge() {
+  function connectAadiBridge() {
     try {
       const targetUrl = config.wsUrl || 'wss://127.0.0.1:3000/ws';
       ws = new WebSocket(targetUrl);
 
       ws.onopen = () => {
-        console.log('[JARVIS SENTINEL] Connected to Stark Central Mainframe WebSocket.');
+        console.log('[AADI SENTINEL] Connected to AADI Core WebSocket.');
         wsRetryDelay = 2000;
         ws.send(JSON.stringify({
           type: 'SENTINEL_HANDSHAKE',
           device: 'youtube_sentinel_tab',
-          browser: 'safari_or_chrome',
-          version: '2.0.0',
+          assistant: 'AADI',
+          version: '2.1.0',
           title: document.title,
           url: window.location.href,
           currentQuality: currentQuality
@@ -636,7 +688,7 @@
           config.wsUrl = 'ws://127.0.0.1:3000/ws';
         }
         wsRetryDelay = Math.min(10000, wsRetryDelay * 1.5);
-        setTimeout(connectJarvisBridge, wsRetryDelay);
+        setTimeout(connectAadiBridge, wsRetryDelay);
       };
 
       ws.onerror = () => {
@@ -644,7 +696,7 @@
       };
 
     } catch (e) {
-      setTimeout(connectJarvisBridge, 5000);
+      setTimeout(connectAadiBridge, 5000);
     }
   }
 
@@ -685,7 +737,7 @@
       case 'MEDIA_RESOLUTION': {
         const q = params.quality || params.resolution || 'auto';
         applyResolutionPreference(q);
-        showHUDToast(`Remote Resolution: ${formatQualityLabel(q)}`);
+        showHUDToast(`AADI: ${formatQualityLabel(q)} Applied`);
         break;
       }
       case 'SET_SPEED':
@@ -708,10 +760,15 @@
       case 'CAPTURE_SCREENSHOT':
         captureVideoFrame();
         break;
+      case 'DOWNLOAD_YOUTUBE':
+      case 'DOWNLOAD_VIDEO':
+        triggerVideoDownload(params.quality || '1080p');
+        break;
       case 'GET_STATUS':
         if (ws && ws.readyState === WebSocket.OPEN) {
           ws.send(JSON.stringify({
             type: 'STATUS_RESPONSE',
+            assistant: 'AADI',
             title: document.title,
             currentQuality: currentQuality,
             availableQualities: availableQualities,
@@ -725,10 +782,10 @@
     }
   }
 
-  connectJarvisBridge();
+  connectAadiBridge();
 
   // =========================================================
-  // 8. EXTENSION RUNTIME MESSAGE HANDLER (For Extension Popup)
+  // 9. EXTENSION RUNTIME MESSAGE HANDLER (For Extension Popup)
   // =========================================================
   if (browserAPI && browserAPI.runtime && browserAPI.runtime.onMessage) {
     browserAPI.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -737,6 +794,7 @@
       if (request.action === 'GET_STATUS') {
         sendResponse({
           success: true,
+          assistant: 'AADI',
           title: document.title,
           currentQuality: currentQuality,
           availableQualities: availableQualities,
@@ -752,8 +810,14 @@
       if (request.action === 'SET_RESOLUTION') {
         config.preferredResolution = request.quality;
         applyResolutionPreference(request.quality);
-        showHUDToast(`Quality: ${formatQualityLabel(request.quality)}`);
+        showHUDToast(`AADI: ${formatQualityLabel(request.quality)}`);
         sendResponse({ success: true });
+        return true;
+      }
+
+      if (request.action === 'DOWNLOAD_VIDEO') {
+        const success = triggerVideoDownload(request.quality || '1080p');
+        sendResponse({ success: true, native: success });
         return true;
       }
 

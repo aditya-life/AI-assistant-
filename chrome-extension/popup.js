@@ -1,5 +1,5 @@
 // =========================================================
-// J.A.R.V.I.S. SENTINEL - EXTENSION POPUP CONTROLLER v2.0
+// AADI SENTINEL - EXTENSION POPUP CONTROLLER v2.1
 // Cross-Browser Compatible: Apple Safari & Google Chrome
 // =========================================================
 
@@ -15,6 +15,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const videoTitle = document.getElementById('videoTitle');
   const resSelect = document.getElementById('resSelect');
   const btnApplyRes = document.getElementById('btnApplyRes');
+
+  const dlQualitySelect = document.getElementById('dlQualitySelect');
+  const btnDownloadVideo = document.getElementById('btnDownloadVideo');
+  const dlStatusHint = document.getElementById('dlStatusHint');
+
   const speedButtons = document.querySelectorAll('.speed-btn');
   const speedValueLabel = document.getElementById('speedValueLabel');
   const boostSlider = document.getElementById('boostSlider');
@@ -28,6 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const toggleAdBanners = document.getElementById('toggleAdBanners');
 
   let activeTabId = null;
+  let activeTabUrl = '';
 
   // 1. Load Stored Preferences
   if (browserAPI && browserAPI.storage && browserAPI.storage.local) {
@@ -60,9 +66,9 @@ document.addEventListener('DOMContentLoaded', () => {
     browserAPI.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       if (tabs && tabs[0]) {
         activeTabId = tabs[0].id;
-        const tabUrl = tabs[0].url || '';
+        activeTabUrl = tabs[0].url || '';
 
-        if (tabUrl.includes('youtube.com')) {
+        if (activeTabUrl.includes('youtube.com')) {
           browserAPI.tabs.sendMessage(activeTabId, { action: 'GET_STATUS' }, (response) => {
             if (browserAPI.runtime.lastError || !response) {
               videoTitle.textContent = 'Active on YouTube (Ready)';
@@ -90,17 +96,18 @@ document.addEventListener('DOMContentLoaded', () => {
               boostValueLabel.textContent = `${Math.round(response.volumeBoost * 100)}%`;
             }
 
-            // WebSocket Status
+            // WebSocket Status Badge
             if (response.wsConnected) {
               wsStatusBadge.className = 'status-badge online';
-              wsStatusText.textContent = 'ONLINE';
+              wsStatusText.textContent = 'AADI ONLINE';
             } else {
               wsStatusBadge.className = 'status-badge offline';
-              wsStatusText.textContent = 'STANDALONE';
+              wsStatusText.textContent = 'AADI STANDALONE';
             }
           });
         } else {
           videoTitle.textContent = 'Navigate to YouTube to activate controls';
+          wsStatusText.textContent = 'AADI STANDALONE';
         }
       }
     });
@@ -132,7 +139,25 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // 3. UI Interactions
-  // Apply Resolution
+
+  // Download Video in Any Selected Resolution
+  if (btnDownloadVideo) {
+    btnDownloadVideo.addEventListener('click', () => {
+      const q = dlQualitySelect ? dlQualitySelect.value : '1080p';
+      btnDownloadVideo.textContent = '⏳ STARTING...';
+      if (dlStatusHint) dlStatusHint.textContent = `Dispatched ${q} download to Mac ~/Downloads...`;
+
+      sendTabMessage({ action: 'DOWNLOAD_VIDEO', quality: q, url: activeTabUrl }, (res) => {
+        btnDownloadVideo.textContent = '✓ DOWNLOADING';
+        if (dlStatusHint) dlStatusHint.textContent = `✓ Download started! Check your Mac ~/Downloads folder.`;
+        setTimeout(() => {
+          btnDownloadVideo.textContent = '⬇️ DOWNLOAD';
+        }, 3000);
+      });
+    });
+  }
+
+  // Apply Default Resolution
   btnApplyRes.addEventListener('click', () => {
     const quality = resSelect.value;
     saveConfig('preferredResolution', quality);

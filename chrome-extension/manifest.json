@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "J.A.R.V.I.S. YouTube Sentinel & Media Bridge",
-  "version": "2.0.1",
-  "description": "Autonomous 0.01ms YouTube Ad Neutralizer, Auto 4K/HD Resolution Enforcer & Stark J.A.R.V.I.S. Media Bridge",
+  "name": "AADI YouTube Sentinel & Media Bridge",
+  "version": "2.1.0",
+  "description": "Autonomous 0.01ms YouTube Ad Neutralizer, Auto 4K/HD Resolution Enforcer, Any-Resolution Video Downloader & AADI Media Bridge",
   "permissions": [
     "storage"
   ],
@@ -14,7 +14,7 @@
     "https://127.0.0.1:3000/*"
   ],
   "action": {
-    "default_title": "J.A.R.V.I.S. YouTube Sentinel",
+    "default_title": "AADI YouTube Sentinel",
     "default_popup": "popup.html",
     "default_icon": {
       "16": "icons/icon16.png",

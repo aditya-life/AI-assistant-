@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>J.A.R.V.I.S. YouTube Sentinel</title>
+  <title>AADI YouTube Sentinel</title>
   <link rel="stylesheet" href="popup.css">
 </head>
 <body>
@@ -14,28 +14,47 @@
         <div class="arc-reactor"></div>
       </div>
       <div class="title-wrap">
-        <h1 class="hud-title">J.A.R.V.I.S. SENTINEL</h1>
-        <span class="hud-subtitle">YouTube Defense & Quality Core v2.0</span>
+        <h1 class="hud-title">AADI SENTINEL</h1>
+        <span class="hud-subtitle">YouTube Defense & Downloader v2.1</span>
       </div>
-      <div id="wsStatusBadge" class="status-badge offline" title="Stark Mainframe WebSocket Connection">
+      <div id="wsStatusBadge" class="status-badge offline" title="AADI Core WebSocket Connection">
         <span class="status-dot"></span>
-        <span class="status-text">OFFLINE</span>
+        <span class="status-text">AADI STANDALONE</span>
       </div>
     </header>
 
     <!-- Active Tab Status -->
     <section class="card active-tab-card">
       <div class="card-header">
-        <span class="card-label">CURRENT VIDEO STREAM</span>
+        <span class="card-label">CURRENT STREAM</span>
         <span id="currentQualityBadge" class="quality-badge">AUTO</span>
       </div>
       <div id="videoTitle" class="video-title">No active YouTube video detected</div>
     </section>
 
+    <!-- VIDEO DOWNLOAD MATRIX (Any Resolution) -->
+    <section class="card download-card">
+      <div class="card-header">
+        <span class="card-label">📥 VIDEO DOWNLOAD MATRIX</span>
+      </div>
+      <div class="res-control-row">
+        <select id="dlQualitySelect" class="hud-select">
+          <option value="2160p">🎬 4K UHD (2160p)</option>
+          <option value="1440p">🎬 2K QHD (1440p)</option>
+          <option value="1080p" selected>🎬 1080p Full HD</option>
+          <option value="720p">🎬 720p HD</option>
+          <option value="480p">🎬 480p SD</option>
+          <option value="mp3">🎵 MP3 Audio (Original Quality)</option>
+        </select>
+        <button id="btnDownloadVideo" class="btn-hud-primary btn-download">⬇️ DOWNLOAD</button>
+      </div>
+      <div id="dlStatusHint" class="hint-text">Saves directly into your Mac's ~/Downloads folder.</div>
+    </section>
+
     <!-- Resolution Master Control -->
     <section class="card">
       <div class="card-header">
-        <span class="card-label">DEFAULT RESOLUTION ENFORCER</span>
+        <span class="card-label">DEFAULT PLAYBACK QUALITY</span>
       </div>
       <div class="res-control-row">
         <select id="resSelect" class="hud-select">
@@ -49,7 +68,7 @@
         </select>
         <button id="btnApplyRes" class="btn-hud-primary">APPLY</button>
       </div>
-      <div class="hint-text">Auto-switches every video to this quality instantly.</div>
+      <div class="hint-text">Auto-enforces this quality whenever a video starts.</div>
     </section>
 
     <!-- Speed Controls -->
@@ -89,14 +108,14 @@
       </button>
       <button id="btnCapture" class="btn-util">
         <span class="util-icon">📸</span>
-        <span>HD Screenshot</span>
+        <span>HD Frame Snapshot</span>
       </button>
     </section>
 
     <!-- Sentinel Shield Settings -->
     <section class="card">
       <div class="card-header">
-        <span class="card-label">SENTINEL SHIELD DEFENSE</span>
+        <span class="card-label">AADI SHIELD DEFENSE</span>
       </div>
       <div class="toggle-list">
         <label class="toggle-row">
@@ -124,7 +143,7 @@
 
     <!-- Footer -->
     <footer class="hud-footer">
-      <span>STARK INDUSTRIES • J.A.R.V.I.S. SENTINEL</span>
+      <span>AADI OS • STARK TECH</span>
       <span class="safari-tag">SAFARI & CHROME READY</span>
     </footer>
   </div>

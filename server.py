@@ -778,6 +778,43 @@ def execute_mac_command(action: str, params: Dict[str, Any] = {}) -> Dict[str, A
             stdout, _ = process.communicate()
             return {"success": True, "text": stdout.decode("utf-8", errors="ignore")}
 
+        elif action == "DOWNLOAD_YOUTUBE":
+            yt_url = params.get("url", "")
+            quality = str(params.get("quality", "1080p")).lower()
+            if yt_url:
+                import threading
+                def _bg_download(target_url: str, res_choice: str):
+                    yt_dlp_bin = "/Users/aditya/.local/bin/yt-dlp" if os.path.exists("/Users/aditya/.local/bin/yt-dlp") else "yt-dlp"
+                    downloads_dir = os.path.expanduser("~/Downloads")
+                    try:
+                        if res_choice in ("mp3", "audio"):
+                            dl_cmd = f'"{yt_dlp_bin}" -x --audio-format mp3 -o "{downloads_dir}/%(title)s.%(ext)s" "{target_url}"'
+                            subprocess.run(dl_cmd, shell=True)
+                            subprocess.run(["osascript", "-e", 'display notification "YouTube Audio downloaded to ~/Downloads" with title "AADI Downloader"'])
+                            return
+
+                        fmt = "bestvideo[height<=1080]+bestaudio/best"
+                        if "4320" in res_choice or "8k" in res_choice:
+                            fmt = "bestvideo[height<=4320]+bestaudio/best"
+                        elif "2160" in res_choice or "4k" in res_choice:
+                            fmt = "bestvideo[height<=2160]+bestaudio/best"
+                        elif "1440" in res_choice or "2k" in res_choice:
+                            fmt = "bestvideo[height<=1440]+bestaudio/best"
+                        elif "720" in res_choice:
+                            fmt = "bestvideo[height<=720]+bestaudio/best"
+                        elif "480" in res_choice:
+                            fmt = "bestvideo[height<=480]+bestaudio/best"
+
+                        dl_cmd = f'"{yt_dlp_bin}" -f "{fmt}" --merge-output-format mp4 -o "{downloads_dir}/%(title)s_{res_choice}.%(ext)s" "{target_url}"'
+                        subprocess.run(dl_cmd, shell=True)
+                        subprocess.run(["osascript", "-e", f'display notification "Video downloaded in {res_choice} to ~/Downloads" with title "AADI Downloader"'])
+                    except Exception as err:
+                        print(f"[AADI DOWNLOAD ERROR] {err}")
+
+                thread = threading.Thread(target=_bg_download, args=(yt_url, quality), daemon=True)
+                thread.start()
+                return {"success": True, "action": "DOWNLOAD_YOUTUBE", "url": yt_url, "quality": quality, "status": "started"}
+
         else:
             return {"success": False, "error": f"Unknown action: {action}"}
 

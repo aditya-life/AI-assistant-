@@ -1,15 +1,15 @@
 // =========================================================
-// J.A.R.V.I.S. SENTINEL - MAIN WORLD YOUTUBE INJECTOR v2.0
+// AADI SENTINEL - MAIN WORLD YOUTUBE INJECTOR v2.1
 // Direct YouTube HTML5 Player API Bridge for 4K/HD Quality
 // =========================================================
 
 (function() {
   'use strict';
 
-  if (window.__JARVIS_SENTINEL_INJECTED__) return;
-  window.__JARVIS_SENTINEL_INJECTED__ = true;
+  if (window.__AADI_SENTINEL_INJECTED__) return;
+  window.__AADI_SENTINEL_INJECTED__ = true;
 
-  console.log('[JARVIS INJECT] Main World Player Bridge Initialized.');
+  console.log('[AADI INJECT] Main World Player Bridge Initialized.');
 
   const QUALITY_MAP = {
     '8k': 'highres',
@@ -132,15 +132,14 @@
         player.setPlaybackQuality(finalQuality);
       }
 
-      console.log(`[JARVIS INJECT] Target: "${target}" -> Enforced: "${finalQuality}" (Current: ${getCurrentQuality()})`);
+      console.log(`[AADI INJECT] Target: "${target}" -> Enforced: "${finalQuality}" (Current: ${getCurrentQuality()})`);
 
       // Post update back to content script
       sendQualityUpdate();
     } catch (e) {
-      console.warn('[JARVIS INJECT] Quality application error:', e);
+      console.warn('[AADI INJECT] Quality application error:', e);
     }
 
-    // Re-check after playback stabilizes (YouTube sometimes resets quality during initial buffering)
     if (attempts === 0 && finalQuality !== 'auto') {
       setTimeout(() => applyQuality(target, 1), 1000);
       setTimeout(() => applyQuality(target, 2), 2500);
@@ -150,7 +149,7 @@
   function sendQualityUpdate() {
     const player = getPlayer();
     window.postMessage({
-      source: 'JARVIS_SENTINEL_INJECT',
+      source: 'AADI_SENTINEL_INJECT',
       type: 'QUALITY_UPDATE',
       payload: {
         currentQuality: getCurrentQuality(),
@@ -164,7 +163,7 @@
 
   // Listen for commands from content.js
   window.addEventListener('message', (event) => {
-    if (!event.data || event.data.source !== 'JARVIS_SENTINEL_CS') return;
+    if (!event.data || event.data.source !== 'AADI_SENTINEL_CS') return;
 
     const { type, payload } = event.data;
 
@@ -205,8 +204,8 @@
   // Hook into video element events
   function attachVideoListeners() {
     const video = document.querySelector('video');
-    if (video && !video.__jarvis_hooked__) {
-      video.__jarvis_hooked__ = true;
+    if (video && !video.__aadi_hooked__) {
+      video.__aadi_hooked__ = true;
       video.addEventListener('loadedmetadata', () => {
         if (preferredQuality && preferredQuality !== 'auto') {
           setTimeout(() => applyQuality(preferredQuality), 400);
