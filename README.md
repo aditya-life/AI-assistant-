@@ -2,14 +2,14 @@
 
 > **Next-Gen Bilingual Voice Assistant with 3D Holographic Arc-Reactor HUD, YouTube Direct Play, Mac System Automation & Device-Isolated Audio Routing.**
 
-📖 **Complete Master Blueprint:** For full step-by-step reproduction and architectural specifications, see [BLUEPRINT.md](file:///Users/aditya/Desktop/jarvis-assistant/BLUEPRINT.md).
+📖 **Complete Master Blueprint:** For full step-by-step reproduction and architectural specifications, see [BLUEPRINT.md](BLUEPRINT.md).
 
 ---
 
 ## 📑 Table of Contents
 1. [🌟 Project Overview (Yeh Kya Hai?)](#-project-overview-yeh-kya-hai)
 2. [✨ Key Features (Isme Kya-Kya Hai?)](#-key-features-isme-kya-kya-hai)
-3. [📖 Master Blueprint (Project Reproduction Guide)](file:///Users/aditya/Desktop/jarvis-assistant/BLUEPRINT.md)
+3. [📖 Master Blueprint (Project Reproduction Guide)](BLUEPRINT.md)
 4. [🏛️ System Architecture (Kaise Kaam Karta Hai?)](#️-system-architecture-kaise-kaam-karta-hai)
 5. [🚀 Quick Setup Guide (Step-by-Step Setup)](#-quick-setup-guide-step-by-step-setup)
 6. [📱 Phone & Bike Mode Setup (Locked Android Phone)](#-phone--bike-mode-setup-locked-android-phone)
@@ -219,6 +219,32 @@ jarvis-assistant/
 │   └── manifest.json       # PWA Mobile Standalone App Support
 └── README.md               # 📖 Master Documentation
 ```
+
+---
+
+## 🎯 Engineering Highlights & Interview Talking Points
+
+When presenting this project during a full-stack, frontend, or systems engineering interview:
+
+1. **Hybrid WebSockets Architecture:**
+   - *Explanation:* Rather than relying on HTTP polling which adds network overhead and latency, bidirectional WebSockets connect the frontend browser client with Python's FastAPI engine (`server.py`). Speech transcriptions and telemetry metrics are streamed full-duplex with sub-2ms processing latencies.
+2. **Audio-Driven Visual Synthesizer (HTML5 Canvas + Web Audio API):**
+   - *Explanation:* The rotating Arc-Reactor HUD is not a canned GIF or video loop. It dynamically analyzes live audio frequencies via the browser's `AudioContext` and `AnalyserNode` in real time, transforming FFT frequency bins into dynamic Canvas arc pulse radii at 60 FPS.
+3. **Progressive Web App (PWA) Mobile Deployment:**
+   - *Explanation:* By leveraging a modern Web App Manifest (`manifest.json`) and responsive touch-first design, the assistant functions like a native mobile app on both Android and iOS without requiring app store distribution or native APK builds.
+4. **Deep URL Scheme Orchestration:**
+   - *Explanation:* On mobile devices, web links are automatically transformed into native app URI schemes (e.g. `vnd.youtube://` for YouTube or `spotify:search:` for Spotify), launching installed native mobile applications directly with pre-filled search parameters.
+5. **Privacy-First Zero-Cost Design with Optional LLM Fallback:**
+   - *Explanation:* Core commands (system volume, app opening, brightness, timers) run completely offline via local regex intent mapping and macOS AppleScript/system calls. Cloud LLMs (such as Google Gemini) are called selectively as an asynchronous fallback, keeping operational costs at $0.
+
+---
+
+## 👤 Author & Contact
+
+**Aditya Kumar**
+- **GitHub:** [@aditya-life](https://github.com/aditya-life)
+- **LinkedIn:** [Aditya Kumar](https://www.linkedin.com/in/aditya-life)
+- **Email:** aditya12186@gmail.com
 
 ---
 
