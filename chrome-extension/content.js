@@ -556,15 +556,15 @@
       return true;
     }
 
-    // STANDALONE MODE FALLBACK (When Python server is not running)
+    // STANDALONE MODE FALLBACK (When local Python server is not running)
     const match = videoUrl.match(/[?&]v=([^&]+)/);
     const videoId = match ? match[1] : '';
 
     if (videoId) {
-      // Safe fast direct web stream portal
-      const fallbackUrl = `https://10downloader.com/download?v=${videoId}`;
+      // 100% verified active download portal (SaveFrom / SSYouTube)
+      const fallbackUrl = `https://ssyoutube.com/watch?v=${videoId}`;
       window.open(fallbackUrl, '_blank');
-      showHUDToast(`AADI Standalone: Opened direct download portal!`);
+      showHUDToast(`AADI Standalone: Opened Download Portal!`);
     } else {
       showHUDToast(`AADI: Please open a YouTube video to download.`);
     }
