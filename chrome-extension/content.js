@@ -674,9 +674,6 @@
   }
 
   // =========================================================
-  // 8. DIRECT WEBSOCKET MEDIA BRIDGE TO LOCAL A.A.D.I. CORE
-  // =========================================================
-  // =========================================================
   // 8. WEBSOCKET REAL-TIME BRIDGE TO AADI CORE (Via Service Worker)
   // =========================================================
   let wsConnected = false;
@@ -799,7 +796,6 @@
 
       if (request.action === 'GET_STATUS') {
         sendResponse({
-        sendResponse({
           success: true,
           assistant: 'AADI',
           title: document.title,
@@ -809,7 +805,7 @@
           playbackRate: video ? video.playbackRate : 1.0,
           volumeBoost: config.volumeBoost,
           isAdPlaying: !!(document.querySelector('#movie_player.ad-showing')),
-          wsConnected: !!(ws && ws.readyState === WebSocket.OPEN)
+          wsConnected: wsConnected
         });
         return true;
       }
