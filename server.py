@@ -1542,18 +1542,22 @@ async def webhook_trigger(request: Request):
     data = await request.json()
     action = data.get("action")
     command = data.get("command", action)
-    print(f"[JARVIS PYTHON WEBHOOK] {command}")
+    print(f"[AADI PYTHON WEBHOOK] {command}")
 
+    result = None
     if action:
         result = execute_mac_command(action, data)
-        await manager.broadcast({
-            "type": "COMMAND",
-            "payload": {
-                "action": action,
-                "params": data,
-                "timestamp": time.time()
-            }
-        })
+        # CRITICAL SAFEGUARD: Never echo DOWNLOAD_YOUTUBE / DOWNLOAD_VIDEO back as COMMAND broadcast!
+        # Otherwise connected browser tabs receive it and re-trigger downloads in an infinite loop.
+        if action not in ("DOWNLOAD_YOUTUBE", "DOWNLOAD_VIDEO"):
+            await manager.broadcast({
+                "type": "COMMAND",
+                "payload": {
+                    "action": action,
+                    "params": data,
+                    "timestamp": time.time()
+                }
+            })
 
     await manager.broadcast({
         "type": "WEBHOOK_EVENT",
@@ -1567,7 +1571,7 @@ async def webhook_trigger(request: Request):
 
     return {
         "status": "acknowledged",
-        "assistant": config.get("assistantName", "J.A.R.V.I.S."),
+        "assistant": config.get("assistantName", "AADI"),
         "message": f"Command executed: {command}",
         "result": result
     }

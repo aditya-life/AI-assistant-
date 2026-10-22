@@ -168,14 +168,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 3000);
       })
       .catch(err => {
-        console.warn('Local AADI server unreachable, using standalone fallback:', err);
-        // Only if local Python server is NOT running at all
-        const match = activeTabUrl.match(/[?&]v=([^&]+)/);
-        if (match && match[1]) {
-          window.open(`https://ssyoutube.com/watch?v=${match[1]}`, '_blank');
-        } else {
-          if (dlStatusHint) dlStatusHint.textContent = 'AADI server offline. Run ./start.sh';
-        }
+        console.warn('Local AADI server unreachable:', err);
+        if (dlStatusHint) dlStatusHint.textContent = 'AADI server offline. Please run ./start.sh on your Mac';
         btnDownloadVideo.textContent = '⬇️ DOWNLOAD';
       });
     });

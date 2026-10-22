@@ -1,7 +1,71 @@
 {
   "version": "1.0.0",
-  "lastUpdated": 1792702521,
+  "lastUpdated": 1792704187,
   "intents": [
+    {
+      "id": "learned_test_1792704175",
+      "query": "tony stark ka armor kisne banaya",
+      "keywords": [
+        "tony",
+        "stark",
+        "armor",
+        "kisne",
+        "banaya"
+      ],
+      "reply_en": "Tony Stark designed and engineered all Mark series armors himself.",
+      "reply_hi": "Tony Stark ne apne sabhi Mark series armors khud design aur engineer kiye hain.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1792704175
+    },
+    {
+      "id": "test_qa_skill",
+      "query": "superconductor kya hai",
+      "keywords": [
+        "superconductor",
+        "kya",
+        "hai",
+        "what",
+        "is"
+      ],
+      "reply_en": "A superconductor conducts electricity with zero resistance at low temperatures.",
+      "reply_hi": "Superconductor ek aisi samagri hai jo bina kisi rukawat ke vidyut pravahit karti hai.",
+      "action": null,
+      "hitCount": 1
+    },
+    {
+      "id": "learned_test_1792704127",
+      "query": "tony stark ka armor kisne banaya",
+      "keywords": [
+        "tony",
+        "stark",
+        "armor",
+        "kisne",
+        "banaya"
+      ],
+      "reply_en": "Tony Stark designed and engineered all Mark series armors himself.",
+      "reply_hi": "Tony Stark ne apne sabhi Mark series armors khud design aur engineer kiye hain.",
+      "action": null,
+      "actionParams": {},
+      "hitCount": 1,
+      "learnedAt": 1792704127
+    },
+    {
+      "id": "test_qa_skill",
+      "query": "superconductor kya hai",
+      "keywords": [
+        "superconductor",
+        "kya",
+        "hai",
+        "what",
+        "is"
+      ],
+      "reply_en": "A superconductor conducts electricity with zero resistance at low temperatures.",
+      "reply_hi": "Superconductor ek aisi samagri hai jo bina kisi rukawat ke vidyut pravahit karti hai.",
+      "action": null,
+      "hitCount": 1
+    },
     {
       "id": "learned_test_1792702440",
       "query": "tony stark ka armor kisne banaya",
@@ -74,7 +138,7 @@
       "reply_hi": "According to knowledge records, A quantum computer is a computer that represents and processes information using quantum states. Quantum computations exploit phenomena such as superposition, interference, and entanglement.",
       "action": null,
       "actionParams": {},
-      "hitCount": 3,
+      "hitCount": 5,
       "learnedAt": 1792702175
     },
     {
@@ -90,7 +154,7 @@
       "reply_hi": "Ji Aditya, Virat Kohli ke baare me: Virat Kohli is an Indian international cricketer and former all-format captain of the Indian national cricket team. He is a right-handed batter and an occasional right-arm medium-pace bowler.",
       "action": null,
       "actionParams": {},
-      "hitCount": 4,
+      "hitCount": 6,
       "learnedAt": 1792702174
     },
     {

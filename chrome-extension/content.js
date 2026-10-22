@@ -534,7 +534,7 @@
   setInterval(injectPlayerHUD, 1500);
 
   // =========================================================
-  // 4. SMART VIDEO DOWNLOADER (AADI Native yt-dlp + Standalone Fallback)
+  // 4. SMART VIDEO DOWNLOADER (AADI Native yt-dlp)
   // =========================================================
   let isDownloadTriggering = false;
   function triggerVideoDownload(quality) {
@@ -543,14 +543,14 @@
       return false;
     }
     isDownloadTriggering = true;
-    setTimeout(() => { isDownloadTriggering = false; }, 3500);
+    setTimeout(() => { isDownloadTriggering = false; }, 4000);
 
     const videoUrl = window.location.href;
     const targetQ = quality || '1080p';
 
     showHUDToast(`AADI: Sending ${targetQ.toUpperCase()} to Mac ~/Downloads...`);
 
-    // 1. Direct HTTP POST to local AADI Core (Bypasses WebSocket & guarantees direct Mac download)
+    // Direct HTTP POST to local AADI Core
     fetch('http://127.0.0.1:3000/api/webhook/trigger', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -565,18 +565,12 @@
       return res.json();
     })
     .then(data => {
-      showHUDToast(`✓ Download started! Saving to Mac ~/Downloads`);
+      showHUDToast(`✓ Download started (${targetQ.toUpperCase()})! Saving to Mac ~/Downloads`);
       console.log(`[AADI SENTINEL] Native yt-dlp download initiated for ${targetQ}`);
     })
     .catch(err => {
-      console.warn('[AADI SENTINEL] Local server offline, using web portal fallback:', err);
-      // Fallback only if local Python server is NOT running
-      const match = videoUrl.match(/[?&]v=([^&]+)/);
-      if (match && match[1]) {
-        window.open(`https://ssyoutube.com/watch?v=${match[1]}`, '_blank');
-      } else {
-        showHUDToast(`AADI: Local server offline. Run ./start.sh`);
-      }
+      console.warn('[AADI SENTINEL] Local server offline:', err);
+      showHUDToast(`AADI: Local server offline. Run ./start.sh on your Mac.`);
     });
 
     return true;
@@ -715,6 +709,7 @@
               try { ws.close(); } catch(e) {}
               ws = null;
             }
+            setTimeout(connectAadiBridge, 3000);
           };
 
         } catch (e) {}
@@ -787,7 +782,8 @@
         break;
       case 'DOWNLOAD_YOUTUBE':
       case 'DOWNLOAD_VIDEO':
-        triggerVideoDownload(params.quality || '1080p');
+        // Crucial loop prevention: Show passive HUD toast only, NEVER re-trigger HTTP POST
+        showHUDToast(`✓ Download in progress on Mac ~/Downloads`);
         break;
       case 'GET_STATUS':
         if (ws && ws.readyState === WebSocket.OPEN) {
