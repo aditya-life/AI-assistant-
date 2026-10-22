@@ -550,7 +550,26 @@
 
     showHUDToast(`AADI: Sending ${targetQ.toUpperCase()} to Mac ~/Downloads...`);
 
-    // Direct HTTP POST to local AADI Core
+    // Dispatch via Extension Background Service Worker (Bypasses Frame SOP / Mixed-Content restrictions)
+    if (browserAPI && browserAPI.runtime && browserAPI.runtime.sendMessage) {
+      browserAPI.runtime.sendMessage({
+        action: 'TRIGGER_WEBHOOK',
+        webhookAction: 'DOWNLOAD_YOUTUBE',
+        url: videoUrl,
+        quality: targetQ
+      }, (res) => {
+        if (res && res.success) {
+          showHUDToast(`✓ Download started (${targetQ.toUpperCase()})! Saving to Mac ~/Downloads`);
+          console.log(`[AADI SENTINEL] Native yt-dlp download initiated for ${targetQ}`);
+        } else {
+          console.warn('[AADI SENTINEL] Background webhook proxy error:', res ? res.error : 'No response');
+          showHUDToast(`AADI: Local server offline. Run ./start.sh on your Mac.`);
+        }
+      });
+      return true;
+    }
+
+    // Direct HTTP POST fallback
     fetch('http://127.0.0.1:3000/api/webhook/trigger', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -657,68 +676,26 @@
   // =========================================================
   // 8. DIRECT WEBSOCKET MEDIA BRIDGE TO LOCAL A.A.D.I. CORE
   // =========================================================
-  let ws = null;
-  let wsRetryDelay = 2000;
+  // =========================================================
+  // 8. WEBSOCKET REAL-TIME BRIDGE TO AADI CORE (Via Service Worker)
+  // =========================================================
+  let wsConnected = false;
 
-  function connectAadiBridge() {
-    if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) {
-      return;
+  function syncBridgeStatus() {
+    if (browserAPI && browserAPI.runtime && browserAPI.runtime.sendMessage) {
+      try {
+        browserAPI.runtime.sendMessage({ action: 'GET_BRIDGE_STATUS' }, (res) => {
+          if (browserAPI.runtime.lastError) return;
+          if (res && res.wsConnected !== undefined) {
+            wsConnected = !!res.wsConnected;
+          }
+        });
+      } catch (e) {}
     }
-
-    // Probe HTTP endpoint first to ensure server is alive before opening WebSocket
-    fetch('http://127.0.0.1:3000/api/info')
-      .then(res => {
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        return res.json();
-      })
-      .then(() => {
-        try {
-          const targetUrl = 'ws://127.0.0.1:3000/ws';
-          ws = new WebSocket(targetUrl);
-
-          ws.onopen = () => {
-            console.log(`[AADI SENTINEL] Connected to AADI Core WebSocket via ${targetUrl}`);
-            wsRetryDelay = 3000;
-            ws.send(JSON.stringify({
-              type: 'SENTINEL_HANDSHAKE',
-              device: 'youtube_sentinel_tab',
-              assistant: 'AADI',
-              version: '2.1.0',
-              title: document.title,
-              url: window.location.href,
-              currentQuality: currentQuality
-            }));
-          };
-
-          ws.onmessage = (event) => {
-            try {
-              const msg = JSON.parse(event.data);
-              if (msg.type === 'COMMAND' && msg.payload) {
-                handleRemoteCommand(msg.payload.action, msg.payload.params || {});
-              }
-            } catch (e) {}
-          };
-
-          ws.onclose = () => {
-            ws = null;
-            setTimeout(connectAadiBridge, 5000);
-          };
-
-          ws.onerror = () => {
-            if (ws) {
-              try { ws.close(); } catch(e) {}
-              ws = null;
-            }
-            setTimeout(connectAadiBridge, 3000);
-          };
-
-        } catch (e) {}
-      })
-      .catch(() => {
-        // Server is not running yet, probe again in 10s
-        setTimeout(connectAadiBridge, 10000);
-      });
   }
+
+  setInterval(syncBridgeStatus, 3000);
+  syncBridgeStatus();
 
   function handleRemoteCommand(action, params) {
     const video = document.querySelector('video');
@@ -786,33 +763,42 @@
         showHUDToast(`✓ Download in progress on Mac ~/Downloads`);
         break;
       case 'GET_STATUS':
-        if (ws && ws.readyState === WebSocket.OPEN) {
-          ws.send(JSON.stringify({
-            type: 'STATUS_RESPONSE',
-            assistant: 'AADI',
-            title: document.title,
-            currentQuality: currentQuality,
-            availableQualities: availableQualities,
-            currentTime: video ? video.currentTime : 0,
-            duration: video ? video.duration : 0,
-            paused: video ? video.paused : true,
-            playbackRate: video ? video.playbackRate : 1.0
-          }));
+        if (browserAPI && browserAPI.runtime && browserAPI.runtime.sendMessage) {
+          browserAPI.runtime.sendMessage({
+            action: 'WS_SEND',
+            payload: {
+              type: 'STATUS_RESPONSE',
+              assistant: 'AADI',
+              title: document.title,
+              currentQuality: currentQuality,
+              availableQualities: availableQualities,
+              currentTime: video ? video.currentTime : 0,
+              duration: video ? video.duration : 0,
+              paused: video ? video.paused : true,
+              playbackRate: video ? video.playbackRate : 1.0
+            }
+          });
         }
         break;
     }
   }
 
-  connectAadiBridge();
-
   // =========================================================
-  // 9. EXTENSION RUNTIME MESSAGE HANDLER (For Extension Popup)
+  // 9. EXTENSION RUNTIME MESSAGE HANDLER (For Extension Popup & Background Service Worker)
   // =========================================================
   if (browserAPI && browserAPI.runtime && browserAPI.runtime.onMessage) {
     browserAPI.runtime.onMessage.addListener((request, sender, sendResponse) => {
       const video = document.querySelector('video');
 
+      // Forwarded command from Background Service Worker
+      if (request.type === 'COMMAND' && request.payload) {
+        handleRemoteCommand(request.payload.action, request.payload.params || {});
+        sendResponse({ success: true });
+        return true;
+      }
+
       if (request.action === 'GET_STATUS') {
+        sendResponse({
         sendResponse({
           success: true,
           assistant: 'AADI',

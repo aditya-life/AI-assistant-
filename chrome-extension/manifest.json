@@ -1,11 +1,15 @@
 {
   "manifest_version": 3,
   "name": "AADI YouTube Sentinel & Media Bridge",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Autonomous 0.01ms YouTube Ad Neutralizer, Auto 4K/HD Resolution Enforcer, Any-Resolution Video Downloader & AADI Media Bridge",
   "permissions": [
-    "storage"
+    "storage",
+    "tabs"
   ],
+  "background": {
+    "service_worker": "background.js"
+  },
   "host_permissions": [
     "*://*.youtube.com/*",
     "http://localhost:3000/*",

@@ -97,9 +97,19 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // WebSocket Status Badge
-            if (response.wsConnected) {
+            if (response && response.wsConnected) {
               wsStatusBadge.className = 'status-badge online';
               wsStatusText.textContent = 'AADI ONLINE';
+            } else if (browserAPI && browserAPI.runtime && browserAPI.runtime.sendMessage) {
+              browserAPI.runtime.sendMessage({ action: 'GET_BRIDGE_STATUS' }, (bRes) => {
+                if (bRes && bRes.wsConnected) {
+                  wsStatusBadge.className = 'status-badge online';
+                  wsStatusText.textContent = 'AADI ONLINE';
+                } else {
+                  wsStatusBadge.className = 'status-badge offline';
+                  wsStatusText.textContent = 'AADI STANDALONE';
+                }
+              });
             } else {
               wsStatusBadge.className = 'status-badge offline';
               wsStatusText.textContent = 'AADI STANDALONE';
@@ -107,7 +117,19 @@ document.addEventListener('DOMContentLoaded', () => {
           });
         } else {
           videoTitle.textContent = 'Navigate to YouTube to activate controls';
-          wsStatusText.textContent = 'AADI STANDALONE';
+          if (browserAPI && browserAPI.runtime && browserAPI.runtime.sendMessage) {
+            browserAPI.runtime.sendMessage({ action: 'GET_BRIDGE_STATUS' }, (bRes) => {
+              if (bRes && bRes.wsConnected) {
+                wsStatusBadge.className = 'status-badge online';
+                wsStatusText.textContent = 'AADI ONLINE';
+              } else {
+                wsStatusBadge.className = 'status-badge offline';
+                wsStatusText.textContent = 'AADI STANDALONE';
+              }
+            });
+          } else {
+            wsStatusText.textContent = 'AADI STANDALONE';
+          }
         }
       }
     });
@@ -147,31 +169,26 @@ document.addEventListener('DOMContentLoaded', () => {
       btnDownloadVideo.textContent = '⏳ STARTING...';
       if (dlStatusHint) dlStatusHint.textContent = `Sending ${q} download task to AADI Core...`;
 
-      fetch('http://127.0.0.1:3000/api/webhook/trigger', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'DOWNLOAD_YOUTUBE',
+      if (browserAPI && browserAPI.runtime && browserAPI.runtime.sendMessage) {
+        browserAPI.runtime.sendMessage({
+          action: 'TRIGGER_WEBHOOK',
+          webhookAction: 'DOWNLOAD_YOUTUBE',
           url: activeTabUrl,
           quality: q
-        })
-      })
-      .then(res => {
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        return res.json();
-      })
-      .then(data => {
-        btnDownloadVideo.textContent = '✓ DOWNLOADING';
-        if (dlStatusHint) dlStatusHint.textContent = `✓ Download started! Video saving to Mac ~/Downloads.`;
-        setTimeout(() => {
-          btnDownloadVideo.textContent = '⬇️ DOWNLOAD';
-        }, 3000);
-      })
-      .catch(err => {
-        console.warn('Local AADI server unreachable:', err);
-        if (dlStatusHint) dlStatusHint.textContent = 'AADI server offline. Please run ./start.sh on your Mac';
-        btnDownloadVideo.textContent = '⬇️ DOWNLOAD';
-      });
+        }, (res) => {
+          if (res && res.success) {
+            btnDownloadVideo.textContent = '✓ DOWNLOADING';
+            if (dlStatusHint) dlStatusHint.textContent = `✓ Download started! Video saving to Mac ~/Downloads.`;
+            setTimeout(() => {
+              btnDownloadVideo.textContent = '⬇️ DOWNLOAD';
+            }, 3000);
+          } else {
+            console.warn('Local AADI server unreachable:', res ? res.error : 'No response');
+            if (dlStatusHint) dlStatusHint.textContent = 'AADI server offline. Please run ./start.sh on your Mac';
+            btnDownloadVideo.textContent = '⬇️ DOWNLOAD';
+          }
+        });
+      }
     });
   }
 
