@@ -71,16 +71,19 @@
   let currentQuality = 'unknown';
   let availableQualities = [];
   let wasMutedBySentinel = false;
-  let previousPlaybackRate = 1.0;
+  let desiredPlaybackSpeed = 1.0;
   let audioCtx = null;
   let gainNode = null;
   let audioSourceNode = null;
+  let connectedVideo = null;
 
   // Settings Interaction Lock: Pauses all dismissal clicks when user touches settings
   let settingsMenuLocked = false;
+  let isAutomatedSettingsAction = false;
   let unlockTimer = null;
 
   function lockSettingsInteraction() {
+    if (isAutomatedSettingsAction) return;
     settingsMenuLocked = true;
     clearTimeout(unlockTimer);
     unlockTimer = setTimeout(() => {
@@ -90,6 +93,7 @@
 
   // Capture phase listener: Catch settings click BEFORE any DOM observer or interval
   document.addEventListener('click', (e) => {
+    if (isAutomatedSettingsAction) return;
     if (e.target && e.target.closest) {
       if (e.target.closest('.ytp-settings-button') ||
           e.target.closest('.ytp-settings-menu') ||
@@ -214,74 +218,181 @@
       const settingsBtn = document.querySelector('.ytp-settings-button');
       if (!settingsBtn) return;
 
-      if (isPlayerMenuOpen()) return;
+      isAutomatedSettingsAction = true;
 
-      settingsBtn.click();
+      // 1. Open settings menu if not open
+      const menu = document.querySelector('.ytp-settings-menu, .ytp-popup.ytp-settings-menu');
+      const isVisible = menu && menu.offsetParent !== null && getComputedStyle(menu).display !== 'none';
+      if (!isVisible) {
+        settingsBtn.click();
+      }
 
-      setTimeout(() => {
+      // 2. Poll for Quality menu item (up to 800ms)
+      let pollCount = 0;
+      const pollTimer = setInterval(() => {
+        pollCount++;
         const menuItems = Array.from(document.querySelectorAll('.ytp-menuitem, .ytp-panel-menu .ytp-menuitem'));
+        
+        // Find quality menu item across languages
         const qualityMenuItem = menuItems.find(el => {
           const t = (el.textContent || '').toLowerCase();
-          return t.includes('quality') || t.includes('गुणवत्ता');
+          return t.includes('quality') || t.includes('गुणवत्ता') || t.includes('calidad') || t.includes('qualit');
         });
 
         if (qualityMenuItem) {
+          clearInterval(pollTimer);
           qualityMenuItem.click();
 
+          // Wait for submenu / Advanced option
           setTimeout(() => {
-            const options = Array.from(document.querySelectorAll('.ytp-quality-menu .ytp-menuitem, .ytp-panel-menu .ytp-menuitem'));
-            let match = null;
-
-            if (clean === 'auto') {
-              match = options.find(el => (el.textContent || '').toLowerCase().includes('auto'));
-            } else if (clean === '4k' || clean === '2160') {
-              match = options.find(el => el.textContent.includes('2160') || el.textContent.includes('4K'));
-            } else if (clean === '2k' || clean === '1440') {
-              match = options.find(el => el.textContent.includes('1440') || el.textContent.includes('2K'));
-            } else if (clean === '1080') {
-              match = options.find(el => el.textContent.includes('1080'));
-            } else if (clean === '720') {
-              match = options.find(el => el.textContent.includes('720'));
-            } else if (clean === '480') {
-              match = options.find(el => el.textContent.includes('480'));
-            } else if (clean === '360') {
-              match = options.find(el => el.textContent.includes('360'));
-            }
-
-            if (match) {
-              match.click();
-              console.log('[AADI SENTINEL] Native YouTube quality applied:', match.textContent.trim());
-            }
-
-            const activeMenu = document.querySelector('.ytp-settings-menu');
-            if (activeMenu && getComputedStyle(activeMenu).display !== 'none') {
-              settingsBtn.click();
-            }
-          }, 80);
-        } else {
-          settingsBtn.click();
+            handleQualitySubmenu(clean, settingsBtn);
+          }, 140);
+          return;
         }
-      }, 80);
+
+        if (pollCount > 8) {
+          clearInterval(pollTimer);
+          isAutomatedSettingsAction = false;
+          closeSettingsMenu(settingsBtn);
+        }
+      }, 90);
+
+    } catch (e) {
+      isAutomatedSettingsAction = false;
+    }
+  }
+
+  function handleQualitySubmenu(clean, settingsBtn) {
+    try {
+      // Check if YouTube displayed the 4-choice menu (Auto, Higher picture quality, Data saver, Advanced)
+      const panelItems = Array.from(document.querySelectorAll('.ytp-panel-menu .ytp-menuitem, .ytp-quality-menu .ytp-menuitem, .ytp-menuitem'));
+      const advancedItem = panelItems.find(el => {
+        const t = (el.textContent || '').toLowerCase();
+        return t.includes('advanced') || t.includes('उन्नत') || t.includes('avanzada');
+      });
+
+      if (advancedItem) {
+        advancedItem.click();
+        setTimeout(() => {
+          selectNearestQualityOption(clean, settingsBtn);
+        }, 140);
+      } else {
+        selectNearestQualityOption(clean, settingsBtn);
+      }
+    } catch (err) {
+      isAutomatedSettingsAction = false;
+      closeSettingsMenu(settingsBtn);
+    }
+  }
+
+  function selectNearestQualityOption(clean, settingsBtn) {
+    try {
+      const options = Array.from(document.querySelectorAll('.ytp-panel-menu .ytp-menuitem, .ytp-quality-menu .ytp-menuitem, .ytp-menuitem'));
+      
+      if (clean === 'auto') {
+        const autoOpt = options.find(el => (el.textContent || '').toLowerCase().includes('auto'));
+        if (autoOpt) autoOpt.click();
+        finishSettingsAction(settingsBtn, 'Auto');
+        return;
+      }
+
+      let targetHeight = 1080;
+      if (clean.includes('4320') || clean.includes('8k')) targetHeight = 4320;
+      else if (clean.includes('2160') || clean.includes('4k')) targetHeight = 2160;
+      else if (clean.includes('1440') || clean.includes('2k')) targetHeight = 1440;
+      else if (clean.includes('1080')) targetHeight = 1080;
+      else if (clean.includes('720')) targetHeight = 720;
+      else if (clean.includes('480')) targetHeight = 480;
+      else if (clean.includes('360')) targetHeight = 360;
+      else if (clean.includes('240')) targetHeight = 240;
+      else if (clean.includes('144')) targetHeight = 144;
+      else targetHeight = parseInt(clean) || 1080;
+
+      // Parse available resolutions from options (e.g. "2160p", "1440p", "1080p", "720p", "480p", "360p")
+      const parsedOptions = [];
+      options.forEach(opt => {
+        const txt = (opt.textContent || '').trim();
+        const m = txt.match(/(\d{3,4})p/i);
+        if (m) {
+          parsedOptions.push({
+            el: opt,
+            height: parseInt(m[1]),
+            label: txt
+          });
+        }
+      });
+
+      // Sort descending (highest resolution first)
+      parsedOptions.sort((a, b) => b.height - a.height);
+
+      // CRITICAL: Find exact or nearest highest resolution available (<= targetHeight)
+      let match = parsedOptions.find(o => o.height <= targetHeight);
+      
+      // If requested resolution is lower than lowest available, pick lowest
+      if (!match && parsedOptions.length > 0) {
+        match = parsedOptions[parsedOptions.length - 1];
+      }
+
+      if (match) {
+        match.el.click();
+        console.log(`[AADI SENTINEL] Native YouTube quality applied: ${match.label} (Requested: ${clean}p)`);
+        currentQuality = `${match.height}p`;
+        updatePlayerHUDBadge();
+        showHUDToast(`AADI: ${match.height}p Applied`);
+      } else {
+        // Fallback string search
+        const fallback = options.find(el => el.textContent.includes(clean));
+        if (fallback) fallback.click();
+      }
+
+      finishSettingsAction(settingsBtn);
+    } catch (e) {
+      finishSettingsAction(settingsBtn);
+    }
+  }
+
+  function finishSettingsAction(settingsBtn) {
+    setTimeout(() => {
+      closeSettingsMenu(settingsBtn);
+      isAutomatedSettingsAction = false;
+    }, 100);
+  }
+
+  function closeSettingsMenu(settingsBtn) {
+    try {
+      const menu = document.querySelector('.ytp-settings-menu, .ytp-popup.ytp-settings-menu');
+      if (menu && menu.offsetParent !== null && getComputedStyle(menu).display !== 'none') {
+        if (settingsBtn) settingsBtn.click();
+      }
     } catch (e) {}
   }
 
   function applyPlaybackSpeed(speed) {
     const s = parseFloat(speed);
-    if (isNaN(s)) return;
+    if (isNaN(s) || s <= 0) return;
+    desiredPlaybackSpeed = s;
+    config.playbackRate = s;
 
     // 1. Direct HTML5 Video DOM Manipulation (100% reliable standalone)
-    const video = document.querySelector('video');
+    const video = document.querySelector('video.html5-main-video') || document.querySelector('video');
     if (video) {
       video.playbackRate = s;
       video.defaultPlaybackRate = s;
     }
 
-    // 2. Dispatch to inject.js
+    // 2. Dispatch to inject.js (YouTube Main World API)
     window.postMessage({
       source: 'AADI_SENTINEL_CS',
       type: 'SET_PLAYBACK_SPEED',
       payload: { speed: s }
     }, '*');
+
+    // 3. Persistent Local Storage
+    if (browserAPI && browserAPI.storage && browserAPI.storage.local) {
+      browserAPI.storage.local.set({ playbackRate: s });
+    }
+
+    showHUDToast(`Speed: ${s}x`);
   }
 
   // =========================================================
@@ -289,6 +400,7 @@
   // =========================================================
 
   function isPlayerMenuOpen() {
+    if (isAutomatedSettingsAction) return false;
     if (settingsMenuLocked) return true;
 
     // 1. YouTube native settings gear popup
@@ -370,7 +482,7 @@
         // Restore audio & speed once ad finishes
         wasMutedBySentinel = false;
         adVideo.muted = false;
-        adVideo.playbackRate = previousPlaybackRate || 1.0;
+        adVideo.playbackRate = desiredPlaybackSpeed || 1.0;
       }
 
       // 2C. SAFE Dialog & Overlay Dismissal - Only when settings menu is completely closed
@@ -448,6 +560,31 @@
   } else {
     startObserver();
   }
+
+  // Video element hook for rate & quality persistence
+  function hookVideoElement() {
+    const video = document.querySelector('video.html5-main-video') || document.querySelector('video');
+    if (video && !video.__aadi_hooked__) {
+      video.__aadi_hooked__ = true;
+      video.addEventListener('play', () => {
+        if (desiredPlaybackSpeed !== 1.0 && Math.abs(video.playbackRate - desiredPlaybackSpeed) > 0.05) {
+          video.playbackRate = desiredPlaybackSpeed;
+          video.defaultPlaybackRate = desiredPlaybackSpeed;
+        }
+      });
+      video.addEventListener('loadedmetadata', () => {
+        if (desiredPlaybackSpeed !== 1.0) {
+          video.playbackRate = desiredPlaybackSpeed;
+          video.defaultPlaybackRate = desiredPlaybackSpeed;
+        }
+        if (config.preferredResolution && config.preferredResolution !== 'auto') {
+          setTimeout(() => applyResolutionPreference(config.preferredResolution), 500);
+        }
+      });
+    }
+  }
+
+  setInterval(hookVideoElement, 1000);
 
   // Low-frequency safety poll (checking only when ad is present)
   setInterval(() => {
@@ -739,23 +876,35 @@
   function applyAudioGain(factor) {
     try {
       const mult = parseFloat(factor);
-      if (isNaN(mult) || mult < 1.0) return;
+      if (isNaN(mult) || mult < 0.5) return;
 
-      const video = document.querySelector('video');
+      const video = document.querySelector('video.html5-main-video') || document.querySelector('video');
       if (!video) return;
 
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContextClass) return;
+
       if (!audioCtx) {
-        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-        if (!AudioContextClass) return;
         audioCtx = new AudioContextClass();
-        audioSourceNode = audioCtx.createMediaElementSource(video);
-        gainNode = audioCtx.createGain();
-        audioSourceNode.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
       }
 
       if (audioCtx.state === 'suspended') {
         audioCtx.resume();
+      }
+
+      if (connectedVideo !== video) {
+        try {
+          if (audioSourceNode) {
+            audioSourceNode.disconnect();
+          }
+          audioSourceNode = audioCtx.createMediaElementSource(video);
+          gainNode = audioCtx.createGain();
+          audioSourceNode.connect(gainNode);
+          gainNode.connect(audioCtx.destination);
+          connectedVideo = video;
+        } catch (err) {
+          // Video element may already be connected
+        }
       }
 
       if (gainNode) {
@@ -763,7 +912,7 @@
         console.log(`[AADI SENTINEL] Audio gain set to ${Math.round(mult * 100)}%`);
       }
     } catch (e) {
-      // AudioContext safe error
+      console.warn('[AADI SENTINEL] Audio boost safe error:', e);
     }
   }
 

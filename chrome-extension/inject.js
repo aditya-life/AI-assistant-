@@ -180,6 +180,11 @@
         if (player && !isNaN(speed) && typeof player.setPlaybackRate === 'function') {
           player.setPlaybackRate(speed);
         }
+        const v = document.querySelector('video');
+        if (v && !isNaN(speed)) {
+          v.playbackRate = speed;
+          v.defaultPlaybackRate = speed;
+        }
         sendQualityUpdate();
         break;
       }

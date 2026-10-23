@@ -1322,12 +1322,17 @@ def execute_mac_command(action: str, params: Dict[str, Any] = {}) -> Dict[str, A
                         elif "480" in res_choice:
                             max_h = 480
 
-                        fmt = f"bestvideo[height<={max_h}]+bestaudio/best[height<={max_h}]/best/18"
-                        dl_cmd = f'{dl_runner} --no-playlist -f "{fmt}" --merge-output-format mp4 -o "{downloads_dir}/%(title)s_{res_choice}.%(ext)s" "{target_url}"'
+                        # Nearest resolution selector: chooses best video stream up to max_h, else best available
+                        fmt = f"bestvideo[height<={max_h}]+bestaudio/best[height<={max_h}]/bestvideo+bestaudio/best"
+                        dl_cmd = f'"{py_bin}" -m yt_dlp --no-playlist --cookies-from-browser chrome -f "{fmt}" --merge-output-format mp4 -o "{downloads_dir}/%(title)s.%(ext)s" "{target_url}"'
                         ret = subprocess.run(dl_cmd, shell=True)
                         if ret.returncode != 0:
-                            fallback_cmd = f'"{py_bin}" -m yt_dlp --extractor-args "youtube:player_client=android" -o "{downloads_dir}/%(title)s.%(ext)s" "{target_url}"'
-                            subprocess.run(fallback_cmd, shell=True)
+                            # Fallback: direct progressive runner without cookies lock
+                            fallback_cmd = f'{dl_runner} --no-playlist -f "bestvideo[height<={max_h}]+bestaudio/best[height<={max_h}]/best" --merge-output-format mp4 -o "{downloads_dir}/%(title)s.%(ext)s" "{target_url}"'
+                            ret2 = subprocess.run(fallback_cmd, shell=True)
+                            if ret2.returncode != 0:
+                                last_ditch = f'"{py_bin}" -m yt_dlp -f "best/18" -o "{downloads_dir}/%(title)s.%(ext)s" "{target_url}"'
+                                subprocess.run(last_ditch, shell=True)
 
                         print(f"[AADI DOWNLOAD] Finished {res_choice} video download to ~/Downloads")
                         subprocess.run(["osascript", "-e", f'display notification "Video downloaded to ~/Downloads" with title "AADI Downloader"'])
