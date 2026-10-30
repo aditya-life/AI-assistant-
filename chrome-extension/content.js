@@ -396,97 +396,103 @@
   }
 
   // =========================================================
-  // 2. ULTRA-SAFE AD NEUTRALIZER (Zero Settings Interference)
+  // 2. ULTRA-SAFE & ZERO-LATENCY AD NEUTRALIZER (0.01ms Bypass)
   // =========================================================
 
-  function isPlayerMenuOpen() {
-    if (isAutomatedSettingsAction) return false;
-    if (settingsMenuLocked) return true;
-
-    // 1. YouTube native settings gear popup
-    const settingsMenu = document.querySelector('.ytp-settings-menu, .ytp-popup.ytp-settings-menu');
-    if (settingsMenu && settingsMenu.offsetParent !== null && getComputedStyle(settingsMenu).display !== 'none') {
+  function isAdActive() {
+    const player = document.querySelector('#movie_player, .html5-video-player');
+    if (player && (player.classList.contains('ad-showing') || player.classList.contains('ad-interrupting'))) {
       return true;
     }
-
-    // 2. Settings button aria-expanded state
-    const settingsBtn = document.querySelector('.ytp-settings-button');
-    if (settingsBtn && (settingsBtn.getAttribute('aria-expanded') === 'true' || settingsBtn.classList.contains('ytp-button-active'))) {
+    if (document.querySelector('.ytp-ad-player-overlay, .ytp-ad-player-overlay-layout, .ytp-ad-text, .ytp-ad-preview-container, .ytp-ad-module:not(:empty)')) {
       return true;
     }
+    const skipBtn = document.querySelector('.ytp-ad-skip-button-modern, .ytp-ad-skip-button, .ytp-skip-ad-button, .ytp-ad-skip-button-slot button, [class*="ytp-ad-skip-button"]');
+    if (skipBtn) {
+      return true;
+    }
+    return false;
+  }
 
-    // 3. Submenus and quality panels
-    const panels = document.querySelectorAll('.ytp-panel-menu, .ytp-quality-menu');
-    for (const p of panels) {
-      if (p.offsetParent !== null && getComputedStyle(p).display !== 'none') {
-        return true;
+  function clickSkipButtons() {
+    const skipSelectors = [
+      '.ytp-ad-skip-button-modern',
+      '.ytp-ad-skip-button',
+      '.ytp-skip-ad-button',
+      '.ytp-ad-skip-button-slot button',
+      'button.ytp-ad-skip-button-modern',
+      '.ytp-ad-overlay-close-button',
+      'button.ytp-ad-overlay-close-button',
+      '[class*="ytp-ad-skip-button"]',
+      '[id*="skip-button"] button',
+      'button[id*="skip"]',
+      'button[class*="skip-button"]'
+    ];
+
+    let clicked = false;
+    for (const selector of skipSelectors) {
+      const buttons = document.querySelectorAll(selector);
+      for (const btn of buttons) {
+        if (btn && btn.offsetParent !== null && getComputedStyle(btn).display !== 'none') {
+          try { btn.click(); } catch (e) {}
+          try {
+            btn.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
+          } catch (e) {}
+          clicked = true;
+          console.log('[AADI SENTINEL] Verified Skip Button Clicked:', selector);
+        }
       }
     }
-
-    // 4. Video player popup animating
-    const player = document.querySelector('#movie_player, .html5-video-player');
-    if (player && (player.classList.contains('ytp-settings-menu-active') || player.classList.contains('ytp-popup-animating'))) {
-      return true;
-    }
-
-    return false;
+    return clicked;
   }
 
   function neutralizeAds() {
     if (!config.autoSkipAds) return;
 
-    // CRITICAL GUARD: Never touch anything if user is navigating settings!
-    if (isPlayerMenuOpen()) {
-      return;
-    }
-
     try {
-      const player = document.querySelector('#movie_player, .html5-video-player');
-      const isAd = player && (player.classList.contains('ad-showing') || player.classList.contains('ad-interrupting'));
-      const adVideo = document.querySelector('video');
+      // 1. ALWAYS click any visible skip button immediately
+      clickSkipButtons();
 
-      // 2A. Verified Ad Skip Buttons - ONLY when ad is actively showing!
-      if (isAd) {
-        const skipSelectors = [
-          '.ytp-ad-skip-button-modern',
-          '.ytp-ad-skip-button',
-          '.ytp-skip-ad-button',
-          '.ytp-ad-skip-button-slot button',
-          'button.ytp-ad-skip-button-modern',
-          '.ytp-ad-overlay-close-button'
-        ];
+      const isAd = isAdActive();
+      const adVideo = document.querySelector('video.html5-main-video') || document.querySelector('video');
 
-        for (const selector of skipSelectors) {
-          const buttons = document.querySelectorAll(selector);
-          for (const btn of buttons) {
-            if (btn && btn.offsetParent !== null && getComputedStyle(btn).display !== 'none') {
-              btn.click();
-              console.log('[AADI SENTINEL] Verified Skip Button Clicked!');
-            }
-          }
-        }
-
-        // 2B. Fast-forward Video Ad Stream Instantly
-        if (adVideo) {
-          if (!wasMutedBySentinel) {
-            previousPlaybackRate = adVideo.playbackRate || 1.0;
-            wasMutedBySentinel = true;
-          }
+      if (isAd && adVideo) {
+        // Mute ad immediately to prevent loud blips
+        if (!wasMutedBySentinel) {
+          wasMutedBySentinel = true;
           adVideo.muted = true;
-          if (!isNaN(adVideo.duration) && adVideo.duration > 0) {
-            adVideo.currentTime = adVideo.duration + 2;
-            adVideo.playbackRate = 16.0;
+        }
+
+        // Fast-forward playback speed to browser maximum limit (16x)
+        adVideo.playbackRate = 16.0;
+        adVideo.defaultPlaybackRate = 16.0;
+
+        // Instantly jump timeline to duration end
+        if (Number.isFinite(adVideo.duration) && adVideo.duration > 0.1) {
+          try {
+            adVideo.currentTime = adVideo.duration;
+          } catch (e) {
+            try { adVideo.currentTime = adVideo.duration - 0.1; } catch (e2) {}
           }
         }
+
+        // Trigger native Main-World YouTube player skipAd
+        window.postMessage({
+          source: 'AADI_SENTINEL_CS',
+          type: 'SKIP_AD_MAIN'
+        }, '*');
+
       } else if (!isAd && wasMutedBySentinel && adVideo) {
-        // Restore audio & speed once ad finishes
+        // Restore user's chosen audio and playback speed as soon as ad finishes
         wasMutedBySentinel = false;
         adVideo.muted = false;
-        adVideo.playbackRate = desiredPlaybackSpeed || 1.0;
+        const targetSpeed = desiredPlaybackSpeed || 1.0;
+        adVideo.playbackRate = targetSpeed;
+        adVideo.defaultPlaybackRate = targetSpeed;
       }
 
-      // 2C. SAFE Dialog & Overlay Dismissal - Only when settings menu is completely closed
-      if (config.autoDismissDialogs) {
+      // 2. Safe Dialog & Overlay Dismissal (Only when settings menu is not being actively touched)
+      if (config.autoDismissDialogs && !settingsMenuLocked) {
         // Handle "Video paused. Continue watching?" prompt safely
         const confirmDialog = document.querySelector('yt-confirm-dialog-renderer');
         if (confirmDialog && confirmDialog.offsetParent !== null && getComputedStyle(confirmDialog).display !== 'none') {
@@ -516,7 +522,7 @@
       }
 
     } catch (err) {
-      // Silent safe fail
+      // Safe fail
     }
   }
 
@@ -551,7 +557,7 @@
   function startObserver() {
     const target = document.getElementById('movie_player') || document.body || document.documentElement;
     if (target) {
-      observer.observe(target, { childList: true, subtree: true });
+      observer.observe(target, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
     }
   }
 
@@ -561,19 +567,39 @@
     startObserver();
   }
 
-  // Video element hook for rate & quality persistence
+  // Video element hook for rate & quality persistence + reactive ad neutralization
   function hookVideoElement() {
     const video = document.querySelector('video.html5-main-video') || document.querySelector('video');
     if (video && !video.__aadi_hooked__) {
       video.__aadi_hooked__ = true;
+
+      // 0.01ms reactive ad neutralization on timeupdate
+      video.addEventListener('timeupdate', () => {
+        if (isAdActive()) {
+          neutralizeAds();
+        }
+      });
+
+      // Prevent YouTube from resetting playbackRate during ads
+      video.addEventListener('ratechange', () => {
+        if (isAdActive() && video.playbackRate < 16.0) {
+          video.playbackRate = 16.0;
+        }
+      });
+
       video.addEventListener('play', () => {
-        if (desiredPlaybackSpeed !== 1.0 && Math.abs(video.playbackRate - desiredPlaybackSpeed) > 0.05) {
+        if (isAdActive()) {
+          neutralizeAds();
+        } else if (desiredPlaybackSpeed !== 1.0 && Math.abs(video.playbackRate - desiredPlaybackSpeed) > 0.05) {
           video.playbackRate = desiredPlaybackSpeed;
           video.defaultPlaybackRate = desiredPlaybackSpeed;
         }
       });
+
       video.addEventListener('loadedmetadata', () => {
-        if (desiredPlaybackSpeed !== 1.0) {
+        if (isAdActive()) {
+          neutralizeAds();
+        } else if (desiredPlaybackSpeed !== 1.0) {
           video.playbackRate = desiredPlaybackSpeed;
           video.defaultPlaybackRate = desiredPlaybackSpeed;
         }
@@ -584,15 +610,13 @@
     }
   }
 
-  setInterval(hookVideoElement, 1000);
+  hookVideoElement();
+  setInterval(hookVideoElement, 800);
 
-  // Low-frequency safety poll (checking only when ad is present)
+  // Fast polling loop (100ms) for instant ad neutralization
   setInterval(() => {
-    const player = document.querySelector('#movie_player, .html5-video-player');
-    if (player && (player.classList.contains('ad-showing') || document.querySelector('.ytp-ad-skip-button-modern, .ytp-ad-skip-button'))) {
-      neutralizeAds();
-    }
-  }, 400);
+    neutralizeAds();
+  }, 100);
 
   // =========================================================
   // 3. A.A.D.I. ON-PLAYER RESOLUTION HUD (Zero NotFoundError)

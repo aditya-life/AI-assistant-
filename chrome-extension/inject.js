@@ -188,12 +188,48 @@
         sendQualityUpdate();
         break;
       }
+      case 'SKIP_AD_MAIN': {
+        try {
+          const player = getPlayer();
+          if (player && typeof player.skipAd === 'function') {
+            player.skipAd();
+          }
+        } catch (e) {}
+        break;
+      }
       case 'GET_STATUS': {
         sendQualityUpdate();
         break;
       }
     }
   });
+
+  // Autonomous Main-World Ad Skipping (Direct YouTube Player API Bypass)
+  function autoSkipAdMainWorld() {
+    try {
+      const player = getPlayer();
+      if (!player) return;
+      const isAd = (player.classList && (player.classList.contains('ad-showing') || player.classList.contains('ad-interrupting'))) ||
+                   (typeof player.getAdState === 'function' && player.getAdState() > 0) ||
+                   !!document.querySelector('.ytp-ad-skip-button-modern, .ytp-ad-skip-button, .ytp-skip-ad-button, .ytp-ad-player-overlay');
+      if (isAd) {
+        if (typeof player.skipAd === 'function') {
+          player.skipAd();
+        }
+        const video = document.querySelector('video.html5-main-video') || document.querySelector('video');
+        if (video) {
+          video.muted = true;
+          video.playbackRate = 16.0;
+          video.defaultPlaybackRate = 16.0;
+          if (Number.isFinite(video.duration) && video.duration > 0.1) {
+            try { video.currentTime = video.duration; } catch (e) {}
+          }
+        }
+      }
+    } catch (e) {}
+  }
+
+  setInterval(autoSkipAdMainWorld, 120);
 
   // Auto-enforce on navigation and player events
   function onVideoNavigate() {

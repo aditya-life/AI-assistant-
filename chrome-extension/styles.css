@@ -10,7 +10,13 @@ ytd-ad-slot-renderer,
 #masthead-ad,
 .ytp-ad-overlay-container,
 .ytp-ad-overlay-slot,
-ytd-statement-banner-renderer {
+.ytp-ad-overlay-image,
+ytd-statement-banner-renderer,
+ytd-display-ad-renderer,
+ytd-promoted-sparkles-web-renderer,
+ytd-promoted-sparkles-text-search-renderer,
+#player-ads,
+#panels:has(ytd-ads-engagement-panel-content-view-model) {
   display: none !important;
 }
 
